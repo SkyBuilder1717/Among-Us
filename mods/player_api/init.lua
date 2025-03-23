@@ -27,6 +27,16 @@ end
 
 local storage = settings.storage
 core.register_on_joinplayer(function(player)
+	settings.play_sound("joining")
+
+	local str = core.settings:get("static_spawnpoint")
+	str = str:sub(2, -2)
+	local pos = {}
+	for v in string.gmatch(str, "([^,]+)") do
+		table.insert(pos, tonumber(v))
+	end
+	player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
+
 	local inv = player:get_inventory()
 	inv:set_size("hand", 1)
 	player_api.set_model(player, "character.b3d")
@@ -56,4 +66,11 @@ end)
 core.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
 	settings.players[name] = nil
+	settings.play_sound("leaving")
+end)
+
+core.register_on_prejoinplayer(function(name)
+	if settings.started then
+		return "Game is already started! Please, join later!"
+	end
 end)

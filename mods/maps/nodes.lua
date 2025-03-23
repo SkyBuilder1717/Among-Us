@@ -541,6 +541,7 @@ core.register_node("maps:button", {
 	tiles = {"maps_button.png"},
 	sounds = maps.node_sound_defaults(),
 	mesh = "maps_button.obj",
+	use_texture_alpha = "blend",
 	paramtype = "light",
 	paramtype2 = "facedir",
 	selection_box = {
@@ -551,6 +552,12 @@ core.register_node("maps:button", {
 		type = "fixed",
 		fixed = {-0.5, -0.5, -0.5, 1.5, 0.5, 1.5}
 	},
+	on_rightclick = function(_, _, player)
+		local name = player:get_player_name()
+		if not settings.meeting_started then
+			settings.show_button_menu(name)
+		end
+	end
 })
 
 core.register_node("maps:communication", {

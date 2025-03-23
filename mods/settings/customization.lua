@@ -56,6 +56,8 @@ function settings.show_customization_menu(name)
         table.insert(formspec, "_plus;;true;false;gui_buttonbg_small_hover.png")
         table.insert(formspec, plus)
         table.insert(formspec, "]")
+
+        table.insert(formspec, "image_button[1,5;5.75,3;settings_start.png;start;;true;false]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
     settings.formspec[name] = nil
@@ -67,6 +69,14 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     core.sound_play("selected", {to_player = player_name})
     if player_name ~= admin then return end
     if fields.quit then
+        return
+    end
+    if fields.start then
+        if #core.get_connected_players() >= 4 then
+            settings.start_game()
+        else
+            core.chat_send_player(player_name, "Not enough players!")
+        end
         return
     end
     if fields.skins then

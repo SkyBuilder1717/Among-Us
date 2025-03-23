@@ -2,6 +2,13 @@ settings = {
     storage = core.get_mod_storage(),
     map = "skeld",
     started = false,
+    meeting_started = false,
+    meeting = {
+        status = "discuss",
+        time = 30,
+        players = {},
+        hud = {}
+    },
     lobby = {
         impostors = {
             title = "Impostors",
@@ -80,6 +87,7 @@ settings = {
 }
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
+local S = core.get_translator(modname)
 
 for color, def in pairs(settings.colors) do
     core.register_item("settings:"..color, {
@@ -92,6 +100,7 @@ end
 dofile(modpath.."/api.lua")
 dofile(modpath.."/skins.lua")
 dofile(modpath.."/customization.lua")
+dofile(modpath.."/button.lua")
 
 core.register_node("settings:laptop", {
 	drawtype = "mesh",
@@ -132,8 +141,26 @@ function update_settings_ui(player)
     player:hud_change(settings.hud[name], "text", text)
 end
 
+function settings.add_interface(player)
+	local name = player:get_player_name()
+    settings.hud[name] = player:hud_add({
+        position = {x=0.075, y=0.6},
+        scale = {x = 1, y = 1},
+        text = "",
+        number = 0xFFFFFF,
+        item = 0,
+        direction = 0,
+        alignment = {x=1, y=0},
+        offset = {x=0, y=0},
+        world_pos = {x=0, y=0, z=0},
+        size = {x=1, y=1},
+        style = 0,
+    })
+    update_settings_ui(player)
+end
+
 core.register_on_joinplayer(function(player)
-	local formspec = [[
+    local formspec = [[
         bgcolor[#080808BB;true]
         listcolors[#00000069;#5A5A5A;#141318;#30434C;#FFF]
     ]]
@@ -148,23 +175,8 @@ core.register_on_joinplayer(function(player)
 
 	player:hud_set_hotbar_image("gui_hotbar.png")
 	player:hud_set_hotbar_selected_image("gui_hotbar_selected.png")
-
-    local id = player:hud_add({
-        position = {x=0.075, y=0.6},
-        scale = {x = 1, y = 1},
-        text = "",
-        number = 0xFFFFFF,
-        item = 0,
-        direction = 0,
-        alignment = {x=1, y=0},
-        offset = {x=0, y=0},
-        world_pos = {x=0, y=0, z=0},
-        size = {x=1, y=1},
-        style = 0,
-    })
-    settings.hud[name] = id
-
-    update_settings_ui(player)
+    
+	settings.add_interface(player)
 end)
 
 core.register_on_leaveplayer(function(player)
@@ -173,5 +185,27 @@ end)
 
 core.after(0, function()
     core.place_schematic({x = -70, y = 0, z = -25}, modpath.."/schematics/ship.mts", 0, {}, true, '')
-    core.place_schematic({x = -49, y = 0, z = -48}, modpath.."/schematics/skeld.mts", 0, {}, true, '')
+    settings.restore("skeld")
 end)
+
+core.register_chatcommand("vote", {
+    description = "Vote, while meetings!",
+    func = function(name, param)
+        if settings.meeting_started then
+            if settings.meeting.status ~= "voting" then
+                return false, S("Wait until Voting time!")
+            else
+                local player = core.get_player_by_name(param)
+                if not player then return false, S("Player not found!") end
+                if settings.meeting.players[name].voted then return false, S("You already voted!") end
+                settings.meeting.players[name].voted = true
+                local color = settings.players[name]
+                local hex = settings.colors[color][1]
+                settings.meeting.players[param].votings = settings.meeting.players[param].votings + 1
+                settings.play_sound("voted")
+                core.chat_send_all(S("@1 voted!", core.colorize(hex, name)))
+                return true
+            end
+        end
+    end
+})
