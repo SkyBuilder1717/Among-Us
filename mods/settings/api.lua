@@ -132,7 +132,12 @@ function settings.finish_voting()
         core.chat_send_all(S("@1: @2 vote(-s)", player_name, def.votings))
     end
     core.chat_send_all("---")
-    settings.restore("")
+    settings.meeting_started = false
+    for _, player in pairs(core.get_connected_players()) do
+        local name = player:get_player_name()
+        player:hud_remove(settings.meeting.hud[name])
+    end
+    settings.restore("skeld")
 end
 
 function settings.start_timer()

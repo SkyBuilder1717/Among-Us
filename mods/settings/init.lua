@@ -82,6 +82,7 @@ settings = {
         }
     },
     players = {},
+    roles = {},
     hud = {},
     formspec = {}
 }
@@ -177,10 +178,15 @@ core.register_on_joinplayer(function(player)
 	player:hud_set_hotbar_selected_image("gui_hotbar_selected.png")
     
 	settings.add_interface(player)
+    for _, player in pairs(core.get_connected_players()) do
+        update_settings_ui(player)
+    end
 end)
 
-core.register_on_leaveplayer(function(player)
-    update_settings_ui(player)
+core.register_on_leaveplayer(function(_)
+    for _, player in pairs(core.get_connected_players()) do
+        update_settings_ui(player)
+    end
 end)
 
 core.after(0, function()

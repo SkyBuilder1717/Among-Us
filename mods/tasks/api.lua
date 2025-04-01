@@ -47,15 +47,21 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
         return
     end
     for _, task in pairs(tasks.players[name]) do
-        if not (task.index == #task.states) and not (task.index > #task.states) then
+        if not (task.index >= #task.states) then
             local index = task.index + 1
             local tpos = task.states[index].pos
             if tpos.x == pos.x and tpos.y == pos.y and tpos.z == pos.z then
-                if task.name == "inspect_sample" and not task.ready then
+                if (task.name == "inspect_sample" and not task.ready) then
                     task.index = 60
                     tasks.inspect_sample(name)
+                    core.sound_play("multitask", {to_player = name})
                 else
                     task.index = task.index + 1
+                    if task.index < #task.states then
+                        core.sound_play("multitask", {to_player = name})
+                    else
+                        core.sound_play("task_completed", {to_player = name})
+                    end
                 end
             end
         end

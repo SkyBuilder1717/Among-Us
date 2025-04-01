@@ -74,9 +74,9 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     if fields.start then
         if #core.get_connected_players() >= 4 then
             settings.start_game()
-        else
-            core.chat_send_player(player_name, "Not enough players!")
+            return
         end
+        core.chat_send_player(player_name, "Not enough players!")
         return
     end
     if fields.skins then
