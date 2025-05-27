@@ -24,6 +24,13 @@ settings = {
             default = 4,
             min = 1, 
             max = 8
+        },
+        kill_cooldown = {
+            title = "Kill cooldown",
+            type = "int",
+            default = 45,
+            min = 1, 
+            max = 60
         }
     },
     colors = {
@@ -102,6 +109,7 @@ for color, def in pairs(settings.colors) do
         type = "none",
         wield_image = "wield_hand_fill.png^[colorize:"..def[1]..":255]^(wield_hand_outline.png^[colorize:"..def[2]..":255])",
         groups = {not_in_creative_inventory=1},
+        --range = 1
     })
 end
 
@@ -220,6 +228,29 @@ core.register_chatcommand("vote", {
                 settings.play_sound("voted")
                 core.chat_send_all(S("@1 voted!", core.colorize(hex, name)))
                 return true
+            end
+        end
+    end
+})
+
+core.register_tool("settings:knife", {
+    description = S("Kill!"),
+    inventory_image = "settings_knife.png",
+    on_use = function(itemstack, player, pointed_thing)
+        local player_name = player:get_player_name()
+        local meta = itemstack:get_meta()
+        if meta:get_int("among_us_cooldown") > 0 then
+            core.chat_send_player(player_name, "Wait for cooldown!")
+        else
+            if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
+                local victim = pointed_thing.ref
+                settings.kill(victim:get_player_name())
+                core.sound_play("kill", {to_player = player_name})
+                meta:set_int("among_us_cooldown", 1)
+                core.after(settings.get_setting("kill_cooldown"), function()
+                    meta:set_int("among_us_cooldown", 0)
+                    core.chat_send_player(player_name, "You can use Kill! again.")
+                end)
             end
         end
     end

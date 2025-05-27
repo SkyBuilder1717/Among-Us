@@ -16,7 +16,7 @@ player_api.register_model("character.b3d", {
 			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}}
 	},
 	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
-	stepheight = 0.6,
+	stepheight = 1,
 	eye_height = 1.47,
 })
 
@@ -39,7 +39,9 @@ core.register_on_joinplayer(function(player)
 
 	local inv = player:get_inventory()
 	inv:set_size("hand", 1)
+	inv:set_stack("main", 1, "")
 	player_api.set_model(player, "character.b3d")
+	player:set_properties({show_on_minimap = false})
 	-- player:set_physics_override({
 	-- 	speed_climb = 0,
 	-- 	speed_crouch = 0,
@@ -66,6 +68,9 @@ end)
 core.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
 	settings.players[name] = nil
+    settings.roles[name] = nil
+    settings.hud[name] = nil
+	settings.meeting.players[name] = nil
 	settings.play_sound("leaving")
 end)
 

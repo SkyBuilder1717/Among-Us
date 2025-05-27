@@ -78,36 +78,48 @@ function tasks.add_task(name, def)
     end
 end
 
-function tasks.show_taskbar(player)
-    local name = player:get_player_name()
+function tasks.show_taskbar()
     local total, current = 0, 0
-    for _, def in pairs(tasks.players[name]) do
-        if not (settings.roles[name] == "impostor") then 
-            total = total + 1
-            if def.index == #def.states then
-                current = current + 1
+    for name, taskings in pairs(tasks.players) do
+        for _, def in pairs(taskings) do
+            if not (settings.roles[name] == "impostor") then 
+                total = total + 1
+                if def.index == #def.states then
+                    current = current + 1
+                end
             end
         end
     end
-    local width = 6 * (current / total)
-    table.insert(tasks.hud[name], player:hud_add({
-        type = "image",
-        position = {x=0.2, y=0.025},
-        name = "taskbar_bg",
-        scale = {x=6, y=6},
-        text = "tasks_taskbar_bg.png",
-        alignment = {x=0, y=0},
-        z_index = 0
-    }))
-    table.insert(tasks.hud[name], player:hud_add({
-        type = "image",
-        position = {x=0.0065, y=0.025},
-        name = "taskbar_fg",
-        scale = {x=width, y=6},
-        text = "tasks_taskbar_fg.png",
-        alignment = {x=1, y=0},
-        z_index = 0
-    }))
+    local percentage = current / total
+    local width = 6 * percentage
+    for _, player in pairs(core.get_connected_players()) do
+        local name = player:get_player_name()
+        if not tasks.hud[name] then tasks.hud[name] = {} end
+        table.insert(tasks.hud[name], player:hud_add({
+            type = "image",
+            position = {x=0.2, y=0.025},
+            name = "taskbar_bg",
+            scale = {x=6, y=6},
+            text = "tasks_taskbar_bg.png",
+            alignment = {x=0, y=0},
+            z_index = 0
+        }))
+        table.insert(tasks.hud[name], player:hud_add({
+            type = "image",
+            position = {x=0.0065, y=0.025},
+            name = "taskbar_fg",
+            scale = {x=width, y=6},
+            text = "tasks_taskbar_fg.png",
+            alignment = {x=1, y=0},
+            z_index = 0
+        }))
+    end
+
+    if percentage == 1 then
+        core.chat_send_all(S("Tasks completed!").." "..core.colorize("cyan", S("Crewmates win!")))
+        settings.play_sound("win_crewmate")
+        settings.end_game()
+    end
 end
 
 function tasks.update_hud()
@@ -120,7 +132,9 @@ function tasks.update_hud()
         end
         tasks.hud[name] = {}
         tasks.show_taskbar(player)
-        if settings.roles[name] == "impostor" then return end
+        if settings.roles[name] == "impostor" then
+            goto continue
+        end
         for i, task in ipairs(new_tasks) do
             local index = task.index + 1
             local states = table.copy(task.states)
@@ -180,6 +194,7 @@ function tasks.update_hud()
                 }))
             end
         end
+        ::continue::
     end
 end
 
