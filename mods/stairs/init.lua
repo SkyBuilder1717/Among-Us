@@ -114,6 +114,7 @@ function stairs.register_stair(subname, recipeitem, groups, images, description,
 
 			return rotate_and_place(itemstack, placer, pointed_thing)
 		end,
+		on_rightclick = tasks.on_rightclick
 	})
 
 	-- for replace ABM
@@ -217,6 +218,7 @@ function stairs.register_slab(subname, recipeitem, groups, images, description,
 				return rotate_and_place(itemstack, placer, pointed_thing)
 			end
 		end,
+		on_rightclick = tasks.on_rightclick
 	})
 
 	-- for replace ABM
@@ -262,59 +264,59 @@ end
 
 function stairs.register_column(subname, recipeitem, groups, images, description,
 	sounds, worldaligntex)
-local def = minetest.registered_nodes[recipeitem] or {}
-local column_images = set_textures(images, worldaligntex)
-local new_groups = table.copy(groups)
-new_groups.slab = 1
-warn_if_exists("stairs:column_" .. subname)
-minetest.register_node(":stairs:column_" .. subname, {
-	description = description,
-	drawtype = "nodebox",
-	tiles = column_images,
-	use_texture_alpha = def.use_texture_alpha,
-	sunlight_propagates = def.sunlight_propagates,
-	light_source = def.light_source,
-	paramtype = "light",
-	paramtype2 = "facedir",
-	is_ground_content = false,
-	groups = new_groups,
-	sounds = sounds or def.sounds,
-	node_box = {
-		type = "fixed",
-		fixed = {-0.1875, -0.5, -0.1875, 0.1875, 0.5, 0.1875},
-	},
-	on_place = function(itemstack, placer, pointed_thing)
-		local under = minetest.get_node(pointed_thing.under)
-		local wield_item = itemstack:get_name()
-		local player_name = placer and placer:get_player_name() or ""
+	local def = minetest.registered_nodes[recipeitem] or {}
+	local column_images = set_textures(images, worldaligntex)
+	local new_groups = table.copy(groups)
+	new_groups.slab = 1
+	warn_if_exists("stairs:column_" .. subname)
+	minetest.register_node(":stairs:column_" .. subname, {
+		description = description,
+		drawtype = "nodebox",
+		tiles = column_images,
+		use_texture_alpha = def.use_texture_alpha,
+		sunlight_propagates = def.sunlight_propagates,
+		light_source = def.light_source,
+		paramtype = "light",
+		paramtype2 = "facedir",
+		is_ground_content = false,
+		groups = new_groups,
+		sounds = sounds or def.sounds,
+		node_box = {
+			type = "fixed",
+			fixed = {-0.1875, -0.5, -0.1875, 0.1875, 0.5, 0.1875},
+		},
+		on_place = function(itemstack, placer, pointed_thing)
+			local under = minetest.get_node(pointed_thing.under)
+			local wield_item = itemstack:get_name()
+			local player_name = placer and placer:get_player_name() or ""
 
-		if under and under.name:find("^stairs:column_") then
-			-- place slab using under node orientation
-			local dir = minetest.dir_to_facedir(vector.subtract(
-				pointed_thing.above, pointed_thing.under), true)
+			if under and under.name:find("^stairs:column_") then
+				-- place slab using under node orientation
+				local dir = minetest.dir_to_facedir(vector.subtract(
+					pointed_thing.above, pointed_thing.under), true)
 
-			local p2 = under.param2
+				local p2 = under.param2
 
-			-- Placing a slab on an upside down slab should make it right-side up.
-			if p2 >= 20 and dir == 8 then
-				p2 = p2 - 20
-			-- same for the opposite case: slab below normal slab
-			elseif p2 <= 3 and dir == 4 then
-				p2 = p2 + 20
+				-- Placing a slab on an upside down slab should make it right-side up.
+				if p2 >= 20 and dir == 8 then
+					p2 = p2 - 20
+				-- same for the opposite case: slab below normal slab
+				elseif p2 <= 3 and dir == 4 then
+					p2 = p2 + 20
+				end
+
+				-- else attempt to place node with proper param2
+				minetest.item_place_node(ItemStack(wield_item), placer, pointed_thing, p2)
+				if not minetest.is_creative_enabled(player_name) then
+					itemstack:take_item()
+				end
+				return itemstack
+			else
+				return rotate_and_place(itemstack, placer, pointed_thing)
 			end
-
-			-- else attempt to place node with proper param2
-			minetest.item_place_node(ItemStack(wield_item), placer, pointed_thing, p2)
-			if not minetest.is_creative_enabled(player_name) then
-				itemstack:take_item()
-			end
-			return itemstack
-		else
-			return rotate_and_place(itemstack, placer, pointed_thing)
-		end
-	end,
-})
-
+		end,
+		on_rightclick = tasks.on_rightclick
+	})
 end
 
 
@@ -383,6 +385,7 @@ function stairs.register_stair_inner(subname, recipeitem, groups, images,
 
 			return rotate_and_place(itemstack, placer, pointed_thing)
 		end,
+		on_rightclick = tasks.on_rightclick
 	})
 
 	if recipeitem then
@@ -453,6 +456,7 @@ function stairs.register_stair_outer(subname, recipeitem, groups, images,
 
 			return rotate_and_place(itemstack, placer, pointed_thing)
 		end,
+		on_rightclick = tasks.on_rightclick
 	})
 
 	if recipeitem then
@@ -567,5 +571,16 @@ my_register_stair_and_slab(
 	"Table Wood Stair",
 	"Table Wood Slab",
 	maps.node_sound_wood(),
+	false
+)
+
+my_register_stair_and_slab(
+	"dark_red_concrete",
+	nil,
+	{},
+	{"maps_dark_red_concrete.png"},
+	"Dark Red Concrete Stair",
+	"Dark Red Concrete Slab",
+	maps.node_sound_defaults(),
 	false
 )

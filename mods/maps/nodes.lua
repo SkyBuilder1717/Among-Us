@@ -280,6 +280,24 @@ core.register_node("maps:shields", {
 	on_rightclick = tasks.on_rightclick
 })
 
+core.register_node("maps:swipe_card", {
+	drawtype = "mesh",
+	tiles = {"maps_swipe_card.png"},
+	sounds = maps.node_sound_defaults(),
+	mesh = "maps_swipe_card.obj",
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.925, -0.775, 0.1, 0.925, -0.25, 0.7}
+	},
+	collision_box = {
+		type = "fixed",
+		fixed = {-0.925, -0.775, 0.1, 0.925, -0.25, 0.7}
+	},
+	paramtype = "light",
+	paramtype2 = "facedir",
+	on_rightclick = tasks.on_rightclick
+})
+
 core.register_node("maps:data", {
 	drawtype = "signlike",
 	tiles = {"maps_wifi.png"},
@@ -536,6 +554,22 @@ core.register_node("maps:locker", {
 	paramtype2 = "facedir"
 })
 
+core.register_node("maps:server", {
+	drawtype = "nodebox",
+	tiles = {
+		"maps_locker_bottom.png", "maps_locker_bottom.png",
+		"maps_locker_side.png", "maps_locker_side.png",
+		"maps_locker_side.png", "maps_server_front.png"
+	},
+	sounds = maps.node_sound_defaults(),
+	node_box = {
+		type = "fixed",
+		fixed = {-0.5, -0.5, 0.0625, 0.5, 1.5, 0.5}
+	},
+	paramtype = "light",
+	paramtype2 = "facedir"
+})
+
 core.register_node("maps:button", {
 	drawtype = "mesh",
 	tiles = {"maps_button.png"},
@@ -593,6 +627,14 @@ core.register_node("maps:vent", {
 		type = "wallmounted",
 	},
 	legacy_wallmounted = true,
+	on_rightclick = function(pos, node, player, stack, pointed_thing)
+		local name = player:get_player_name()
+		if settings.roles[name] == "impostor" then
+
+		else
+			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
+		end
+	end
 })
 
 core.register_node("maps:wires", {

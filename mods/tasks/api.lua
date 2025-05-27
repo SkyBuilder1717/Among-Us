@@ -46,6 +46,7 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
     if not tasks.players[name] then
         return
     end
+    if settings.roles[name] == "impostor" then return end
     for _, task in pairs(tasks.players[name]) do
         if not (task.index >= #task.states) then
             local index = task.index + 1
@@ -81,9 +82,11 @@ function tasks.show_taskbar(player)
     local name = player:get_player_name()
     local total, current = 0, 0
     for _, def in pairs(tasks.players[name]) do
-        total = total + 1
-        if def.index == #def.states then
-            current = current + 1
+        if not (settings.roles[name] == "impostor") then 
+            total = total + 1
+            if def.index == #def.states then
+                current = current + 1
+            end
         end
     end
     local width = 6 * (current / total)
@@ -117,6 +120,7 @@ function tasks.update_hud()
         end
         tasks.hud[name] = {}
         tasks.show_taskbar(player)
+        if settings.roles[name] == "impostor" then return end
         for i, task in ipairs(new_tasks) do
             local index = task.index + 1
             local states = table.copy(task.states)
@@ -135,7 +139,7 @@ function tasks.update_hud()
                 index = 1
                 color = 0xFFFFFF
             end
-            if #states > 1 then
+            if #states > 1 and not task.text_only then
                 table.insert(tasks.hud[name], player:hud_add({
                     type = "text",
                     position = {x=0.075, y=0.05 + (0.025 * i)},
@@ -184,7 +188,9 @@ function tasks.generate_tasks()
         local name = player:get_player_name()
         tasks.players[name] = {}
         local defs = table.copy(tasks.registered_tasks)
-        for i = 1, tasks.amount do
+        local amount = settings.get_setting("tasks")
+
+        for i = 1, amount do
             local num = math.random(1, #defs)
             local task = defs[num]
             local def = task.defs[math.random(1, #task.defs)]
@@ -195,8 +201,6 @@ function tasks.generate_tasks()
                 for i = 1, 3 do
                     table.remove(new_task.states, math.random(1, #new_task.states))
                 end
-            elseif task.name == "trash" and (settings.map == "skeld") then
-                table.remove(new_task.states, math.random(1, 2))
             end
             new_task.name = task.name
             new_task.index = 0

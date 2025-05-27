@@ -100,13 +100,45 @@ function settings.teleport_all(lobby)
     end
 end
 
+local function first(str) if str == nil or str == "" then return str end return string.upper(string.sub(str, 1, 1))..string.sub(str, 2) end
+
+function settings.tell_role(name)
+    local role = settings.roles[name]
+    local color = "cyan"
+    local impostors = {}
+    if role == "impostor" then
+        color = "red"
+        for pname, prole in pairs(settings.roles) do
+            if not (pname == name) then
+                if prole == "impostor" then
+                    table.insert(impostors, pname)
+                end
+            end
+        end
+    end
+    core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(first(role)))))
+    if #impostors > 1 then
+        core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors, ", ")))))
+    end
+end
+
 function settings.start_game()
+    local impostors = settings.get_setting("impostors")
+    settings.play_sound("role")
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
         player:hud_remove(settings.hud[name])
         core.close_formspec(name, '')
+        if impostors > 0 then
+            settings.roles[name] = "impostor"
+            impostors = impostors - 1
+        else
+            settings.roles[name] = "crewmate"
+        end
+        settings.tell_role(name)
     end
     settings.teleport_all()
+    tasks.generate_tasks()
     settings.started = true
 end
 

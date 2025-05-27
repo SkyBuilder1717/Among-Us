@@ -17,6 +17,13 @@ settings = {
             auto = 0,
             min = 1, 
             max = 3
+        },
+        tasks = {
+            title = "Tasks",
+            type = "int",
+            default = 4,
+            min = 1, 
+            max = 8
         }
     },
     colors = {
@@ -102,6 +109,7 @@ dofile(modpath.."/api.lua")
 dofile(modpath.."/skins.lua")
 dofile(modpath.."/customization.lua")
 dofile(modpath.."/button.lua")
+dofile(modpath.."/sabotage.lua")
 
 core.register_node("settings:laptop", {
 	drawtype = "mesh",
@@ -117,6 +125,7 @@ core.register_node("settings:laptop", {
 })
 
 function update_settings_ui(player)
+    if settings.started then return end
     local players = #core.get_connected_players()
     if players < 4 then
         settings.lobby.impostors.auto = 0
