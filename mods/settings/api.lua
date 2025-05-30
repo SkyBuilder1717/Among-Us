@@ -449,7 +449,7 @@ function settings.kill(name)
             makes_footstep_sound = false
         })
         settings.tell_role(name)
-        core.chat_send_player(most_voted, S("You have been killed, but you still can complete tasks!"))
+        core.chat_send_player(name, S("You have been killed, but you still can complete tasks!"))
     end
     settings.check_end_game()
 end
