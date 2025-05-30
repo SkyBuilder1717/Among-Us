@@ -38,10 +38,10 @@ core.register_entity("settings:dead_body", {
             self.object:remove()
         end
     end,
-    on_punch = function(self, puncher)
-        if not puncher:is_player() then return true end
+    on_punch = function(self, player)
+        if not player:is_player() then return true end
         if player:get_properties().visual_size.x < 1 then return end
-        local player_name = puncher:get_player_name()
+        local player_name = player:get_player_name()
         settings.emergency_meeting(player_name, true)
         self.object:remove()
     end
