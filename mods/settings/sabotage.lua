@@ -216,7 +216,7 @@ core.register_chatcommand("lightning", {
                     position = {x=0.5, y=0.5},
                     name = "black_screen",
                     scale = {x = 15, y = 15},
-                    text = "[fill:128x128:0,0:#000000a3",
+                    text = "[fill:128x128:0,0:#000000a0",
                     alignment = {x=0, y=0},
                     offset = {x=0, y=0},
                     z_index = 5000
