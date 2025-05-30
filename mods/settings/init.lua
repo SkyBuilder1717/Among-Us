@@ -113,7 +113,7 @@ for color, def in pairs(settings.colors) do
         type = "none",
         wield_image = "wield_hand_fill.png^[colorize:"..def[1]..":255]^(wield_hand_outline.png^[colorize:"..def[2]..":255])",
         groups = {not_in_creative_inventory=1},
-        range = 1
+        range = 2
     })
 end
 
