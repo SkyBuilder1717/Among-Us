@@ -409,24 +409,26 @@ end
 
 core.register_on_chat_message(function(name, message)
     local color = settings.players[name]
-    local hex = settings.colors[color][1]
-    local plr = core.get_player_by_name(name)
-    if settings.started and (plr:get_properties().visual_size.x < 1) then
-        for _, player in pairs(core.get_connected_players()) do
-            if player:get_properties().visual_size.x < 1 then
-                local pname = player:get_player_name()
-                core.sound_play("new_message", {to_player = pname})
-                core.chat_send_player(pname, core.colorize("#959a9e", S("[GHOST]")).." "..core.format_chat_message(core.colorize(hex, name), message))
+    if color then
+        local hex = settings.colors[color][1]
+        local plr = core.get_player_by_name(name)
+        if settings.started and (plr:get_properties().visual_size.x < 1) then
+            for _, player in pairs(core.get_connected_players()) do
+                if player:get_properties().visual_size.x < 1 then
+                    local pname = player:get_player_name()
+                    core.sound_play("new_message", {to_player = pname})
+                    core.chat_send_player(pname, core.colorize("#959a9e", S("[GHOST]")).." "..core.format_chat_message(core.colorize(hex, name), message))
+                end
             end
+            return true
         end
+        if settings.started and not settings.meeting_started then
+            return true
+        end
+        settings.play_sound("new_message")
+        core.chat_send_all(core.format_chat_message(core.colorize(hex, name), message))
         return true
     end
-    if settings.started and not settings.meeting_started then
-        return true
-    end
-    settings.play_sound("new_message")
-    core.chat_send_all(core.format_chat_message(core.colorize(hex, name), message))
-    return true
 end)
 
 function settings.kill(name)

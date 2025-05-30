@@ -42,20 +42,20 @@ core.register_on_joinplayer(function(player)
 	inv:set_size("hand", 1)
 	player_api.set_model(player, "character.b3d")
 	player:set_properties({show_on_minimap = false})
-	-- player:set_physics_override({
-	-- 	speed_climb = 0,
-	-- 	speed_crouch = 0,
-	-- 	speed_fast = 0,
-	-- 	jump = 0,
-	-- 	liquid_fluidity = 0,
-	-- 	liquid_fluidity_smooth = 0,
-	-- 	liquid_sink = 0,
-	-- 	acceleration_air = 0,
-	-- 	acceleration_fast = 0,
-	-- 	sneak = false,
-	-- 	sneak_glitch = false,
-	-- 	new_move = false,
-	-- })
+	player:set_physics_override({
+		speed_climb = 0,
+		speed_crouch = 0,
+		speed_fast = 0,
+		jump = 0,
+		liquid_fluidity = 0,
+		liquid_fluidity_smooth = 0,
+		liquid_sink = 0,
+		acceleration_air = 0,
+		acceleration_fast = 0,
+		sneak = false,
+		sneak_glitch = false,
+		new_move = false,
+	})
 	local name = player:get_player_name()
 	local color = storage:get("_player_"..name)
 	if color then
