@@ -65,8 +65,14 @@ function settings.is_color_available(color)
     return false
 end
 
+local function choose_color(name)
+	local colors = settings.available_colors()
+	settings.set_color(name, colors[math.random(1, #colors)])
+end
+
 function settings.set_color(name, color)
     if not util.contain(settings.available_colors(), color) then
+        choose_color(name)
         return false
     end
     storage:set_string("_player_"..name, color)
@@ -302,7 +308,6 @@ end
 function settings.end_game()
     settings.started = false
     settings.roles = {}
-    settings.players = {}
     settings.hud = {}
     for _, player in pairs(core.get_connected_players()) do
         local inv = player:get_inventory()
@@ -404,7 +409,7 @@ function settings.emergency_meeting(name, dead)
 end
 
 function settings.restore(map)
-    core.place_schematic({x = -49, y = 0, z = -48}, modpath.."/schematics/"..map..".mts", 0, {}, true, '')
+    core.place_schematic({x = -49, y = -3, z = -48}, modpath.."/schematics/"..map..".mts", 0, {}, true, '')
 end
 
 core.register_on_chat_message(function(name, message)
