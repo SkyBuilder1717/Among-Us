@@ -34,29 +34,18 @@ core.register_entity("settings:dead_body", {
         self.object:set_animation({x = 162, y = 166}, 30, 0, true)
     end,
     on_step = function(self)
-        if not settings.started then
+        if not settings.started or (settings.started and settings.meeting_started) then
             self.object:remove()
         end
     end,
     on_punch = function(self, puncher)
         if not puncher:is_player() then return true end
+        if player:get_properties().visual_size.x < 1 then return end
         local player_name = puncher:get_player_name()
         settings.emergency_meeting(player_name, true)
         self.object:remove()
     end
 })
-
-local function contain(t, vl)
-	for _, v in pairs(t) do if v == vl then return true end end return false
-end
-
-local function remove(t, val)
-    for i, v in ipairs(t) do
-        if v == val then
-            return table.remove(t, i)
-        end
-    end
-end
 
 function settings.available_colors()
 	local colors = {}
@@ -64,20 +53,20 @@ function settings.available_colors()
 		table.insert(colors, color)
 	end
 	for _, color in pairs(settings.players) do
-		remove(colors, color)
+		util.remove(colors, color)
 	end
 	return colors
 end
 
 function settings.is_color_available(color)
-    if contain(settings.available_colors(), color) then
+    if util.contain(settings.available_colors(), color) then
         return true
     end
     return false
 end
 
 function settings.set_color(name, color)
-    if not contain(settings.available_colors(), color) then
+    if not util.contain(settings.available_colors(), color) then
         return false
     end
     storage:set_string("_player_"..name, color)
@@ -145,8 +134,6 @@ function settings.teleport_all(lobby)
     end
 end
 
-local function first(str) if str == nil or str == "" then return str end return string.upper(string.sub(str, 1, 1))..string.sub(str, 2) end
-
 function settings.tell_role(name)
     local role = settings.roles[name]
     local color = "cyan"
@@ -163,10 +150,11 @@ function settings.tell_role(name)
     elseif role == "ghost" then
         color = "#959a9e"
     end
-    core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(first(role)))))
+    core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(util.first(role)))))
     if #impostors > 1 then
         core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors, ", ")))))
     end
+    return role
 end
 
 function settings.start_game()
@@ -178,7 +166,11 @@ function settings.start_game()
         local plr = players[index]
         settings.roles[plr:get_player_name()] = "impostor"
         local inv = plr:get_inventory()
-	    inv:set_stack("main", 1, "settings:knife")
+	    if inv:set_stack("main", 1, "settings:knife") then
+            local itemstack = inv:get_stack("main", 1)
+            local meta = itemstack:get_meta()
+            meta:set_int("among_us_cooldown", 0)
+        end
         table.remove(players, index)
     end
     for _, player in pairs(players) do
@@ -192,7 +184,11 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        settings.tell_role(name)
+        if settings.tell_role(name) == "impostor" then
+            core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
+        else
+            core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
+        end
     end
     settings.teleport_all()
     tasks.generate_tasks()
@@ -239,10 +235,12 @@ function settings.finish_voting()
         local color = settings.players[most_voted]
         local hex = settings.colors[color][1]
         core.chat_send_all(S("@1 was ejected.", core.colorize(hex, most_voted)))
-        local player = core.get_player_by_name(most_voted)
-        if player then
-            settings.role[most_voted] = "ghost"
-            player:set_properties({
+        local most_player = core.get_player_by_name(most_voted)
+        if most_player then
+            if not settings.roles[most_voted] == "impostor" then
+                settings.roles[most_voted] = "ghost"
+            end
+            most_player:set_properties({
                 visual_size = {x = 0, y = 0, z = 0},
                 is_visible = false,
                 pointable = false,
@@ -255,13 +253,26 @@ function settings.finish_voting()
         core.chat_send_all(S("No one was ejected."))
     end
     core.chat_send_all("---")
-
-    settings.check_end_game()
+    if settings.started and most_voted then
+        if not settings.roles[most_voted] == "impostor" then
+            settings.tell_role(name)
+            core.chat_send_player(most_voted, S("You have been ejected, but you still can complete tasks!"))
+        else
+            core.chat_send_player(most_voted, S("You have been ejected, but you still can sabotage!"))
+        end
+        local most_player = core.get_player_by_name(most_voted)
+        local inv = most_player:get_inventory()
+        inv:set_list("main", {})
+    end
     settings.meeting_started = false
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
         player:hud_remove(settings.meeting.hud[name])
+        player:set_properties({
+            nametag_color = {r=0,g=0,b=0,a=0}
+        })
     end
+    settings.check_end_game()
     settings.restore("skeld")
 end
 
@@ -269,9 +280,10 @@ function settings.check_end_game()
     local impostors = 0
     local crewmates = 0
     for name, role in pairs(settings.roles) do
-        if role == "impostor" then
+        local player = core.get_player_by_name(name)
+        if role == "impostor" and not (player:get_properties().visual_size.x < 1) then
             impostors = impostors + 1
-        elseif role == "crewmate" then
+        elseif role == "crewmate" and not (player:get_properties().visual_size.x < 1) then
             crewmates = crewmates + 1
         end
     end
@@ -291,26 +303,32 @@ function settings.end_game()
     settings.started = false
     settings.roles = {}
     settings.players = {}
-    settings.meeting.players = {}
     settings.hud = {}
     for _, player in pairs(core.get_connected_players()) do
+        local inv = player:get_inventory()
+	    inv:set_list("main", {})
         local name = player:get_player_name()
-        local hud = settings.hud[name]
         local meeting_hud = settings.meeting.hud[name]
-        if hud then
-            player:hud_remove(hud)
-        end
         if meeting_hud then
             player:hud_remove(meeting_hud)
         end
+        tasks.reset_hud(name)
         player:set_properties({
             visual_size = {x = 1, y = 1, z = 1},
-            nametag_color = {r=0,g=0,b=0,a=1},
+            nametag_color = {r=255,g=255,b=255,a=255},
             is_visible = true,
             pointable = true,
             makes_footstep_sound = true
         })
+        settings.add_interface(player)
     end
+    for name, id in pairs(settings.black_screen) do
+        local player = core.get_player_by_name(name)
+        player:hud_remove(id)
+    end
+    settings.black_screen = {}
+    settings.meeting.players = {}
+    settings.meeting.hud = {}
     settings.teleport_all(true)
     settings.restore("skeld")
 end
@@ -353,9 +371,23 @@ function settings.emergency_meeting(name, dead)
     settings.restore("skeld_emergency_meeting")
     settings.meeting_started = true
     settings.teleport_all()
+    if (settings.current_sabotage == "reactor" or settings.current_sabotage == "oxygen") then
+        settings.active_sabotage = false
+        settings.current_sabotage = nil
+    end
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        settings.meeting.players[name] = {voted = false, votings = 0}
+        if not (player:get_properties().visual_size.x < 1) then
+            settings.meeting.players[name] = {voted = false, votings = 0}
+            settings.player_positions[name] = nil
+            player:set_properties({
+                nametag_color = {r=255,g=255,b=255,a=255},
+                visual_size = {x = 1, y = 1, z = 1},
+                is_visible = true,
+                pointable = true,
+                makes_footstep_sound = true
+            })
+        end
         core.close_formspec(name, '')
         settings.meeting.hud[name] = player:hud_add({
             type = "text",
@@ -378,10 +410,11 @@ end
 core.register_on_chat_message(function(name, message)
     local color = settings.players[name]
     local hex = settings.colors[color][1]
-    if settings.started and settings.roles[name] == "ghost" then
+    local plr = core.get_player_by_name(name)
+    if settings.started and (plr:get_properties().visual_size.x < 1) then
         for _, player in pairs(core.get_connected_players()) do
-            local pname = player:get_player_name()
-            if settings.roles[pname] == "ghost" then
+            if player:get_properties().visual_size.x < 1 then
+                local pname = player:get_player_name()
                 core.sound_play("new_message", {to_player = pname})
                 core.chat_send_player(pname, core.colorize("#959a9e", S("[GHOST]")).." "..core.format_chat_message(core.colorize(hex, name), message))
             end
@@ -416,7 +449,7 @@ function settings.kill(name)
             makes_footstep_sound = false
         })
         settings.tell_role(name)
-        core.chat_send_player(name, "You still can complete the tasks and win!")
+        core.chat_send_player(most_voted, S("You have been killed, but you still can complete tasks!"))
     end
     settings.check_end_game()
 end

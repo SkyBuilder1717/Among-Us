@@ -110,7 +110,7 @@ tasks.add_task("divert_power", {
         },
         {
             {pos = {x = -18, y = 2, z = -24}, title = "Electrical: Divert Power"},
-            {pos = {x = 24, y = 2, z = -31}, title = "Shields: Divert Power"}
+            {pos = {x = 25, y = 2, z = -30}, title = "Shields: Divert Power"}
         },
         {
             {pos = {x = -18, y = 2, z = -24}, title = "Electrical: Divert Power"},
@@ -175,6 +175,7 @@ tasks.add_task("clean_vent", {
         {{pos = {x = 21, y = 1, z = 3}, title = "Weapons: Clean Vent"}},
         {{pos = {x = 41, y = 1, z = -14}, title = "Navigation: Clean Vent"}},
         {{pos = {x = 41, y = 1, z = -21}, title = "Navigation: Clean Vent"}},
+        {{pos = {x = 21, y = 1, z = -21}, title = "Coridor: Clean Vent"}},
         {{pos = {x = 22, y = 1, z = -37}, title = "Shields: Clean Vent"}},
         {{pos = {x = 6, y = 1, z = -27}, title = "Admin: Clean Vent"}}
     }
@@ -199,8 +200,4 @@ tasks.add_task("clear_asteroids", {
     text_only = true,
     map = "skeld",
     states = {{{pos = {x = 23, y = 3, z = 0}, title = "Weapons: Clear Asteroids"}}}
-})
-
-core.register_chatcommand("task", {
-    func = function(name, param) tasks.generate_tasks() end
 })

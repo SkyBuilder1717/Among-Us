@@ -122,15 +122,20 @@ function tasks.show_taskbar()
     end
 end
 
+function tasks.reset_hud(name)
+    local player = core.get_player_by_name(name)
+    if tasks.hud[name] then
+        for _, id in pairs(tasks.hud[name]) do
+            player:hud_remove(id)
+        end
+    end
+    tasks.hud[name] = {}
+end
+
 function tasks.update_hud()
     for name, new_tasks in pairs(tasks.players) do
         local player = core.get_player_by_name(name)
-        if tasks.hud[name] then
-            for _, id in pairs(tasks.hud[name]) do
-                player:hud_remove(id)
-            end
-        end
-        tasks.hud[name] = {}
+        tasks.reset_hud(name)
         tasks.show_taskbar(player)
         if settings.roles[name] == "impostor" then
             goto continue
@@ -139,59 +144,75 @@ function tasks.update_hud()
             local index = task.index + 1
             local states = table.copy(task.states)
             local color
-            if task.index > #states then
-                color = 0xFFFF00
-            elseif (task.index == #states) and (not task.manual) then
-                color = 0x00FF00
-                index = task.index
-            elseif task.index > 0 then
-                color = 0xFFFF00
-            elseif task.ready then
-                index = 1
-                color = 0xFFFF00
+            if not (settings.active_sabotage and settings.current_sabotage == "communication") then
+                if task.index > #states then
+                    color = 0xFFFF00
+                elseif (task.index == #states) and (not task.manual) then
+                    color = 0x00FF00
+                    index = task.index
+                elseif task.index > 0 then
+                    color = 0xFFFF00
+                elseif task.ready then
+                    index = 1
+                    color = 0xFFFF00
+                else
+                    index = 1
+                    color = 0xFFFFFF
+                end
+                if #states > 1 and not task.text_only then
+                    table.insert(tasks.hud[name], player:hud_add({
+                        type = "text",
+                        position = {x=0.075, y=0.05 + (0.025 * i)},
+                        name = task.name,
+                        scale = {x = 1, y = 1},
+                        text = S(states[index].title.." (@1/@2)",
+                            task.index,
+                            #states),
+                        alignment = {x=0, y=0},
+                        z_index = 1,
+                        number = color,
+                        style = 0
+                    }))
+                elseif task.index > #states then
+                    table.insert(tasks.hud[name], player:hud_add({
+                        type = "text",
+                        position = {x=0.075, y=0.05 + (0.025 * i)},
+                        name = task.name,
+                        scale = {x = 1, y = 1},
+                        text = S(states[#states].title.." (@1)",
+                            task.index),
+                        alignment = {x=0, y=0},
+                        z_index = 1,
+                        number = color,
+                        style = 0
+                    }))
+                else
+                    table.insert(tasks.hud[name], player:hud_add({
+                        type = "text",
+                        position = {x=0.075, y=0.05 + (0.025 * i)},
+                        name = task.name,
+                        scale = {x = 1, y = 1},
+                        text = states[index].title,
+                        alignment = {x=0, y=0},
+                        z_index = 1,
+                        number = color,
+                        style = 0
+                    }))
+                end
             else
-                index = 1
-                color = 0xFFFFFF
-            end
-            if #states > 1 and not task.text_only then
-                table.insert(tasks.hud[name], player:hud_add({
-                    type = "text",
-                    position = {x=0.075, y=0.05 + (0.025 * i)},
-                    name = task.name,
-                    scale = {x = 1, y = 1},
-                    text = S(states[index].title.." (@1/@2)",
-                        task.index,
-                        #states),
-                    alignment = {x=0, y=0},
-                    z_index = 1,
-                    number = color,
-                    style = 0
-                }))
-            elseif task.index > #states then
-                table.insert(tasks.hud[name], player:hud_add({
-                    type = "text",
-                    position = {x=0.075, y=0.05 + (0.025 * i)},
-                    name = task.name,
-                    scale = {x = 1, y = 1},
-                    text = S(states[#states].title.." (@1)",
-                        task.index),
-                    alignment = {x=0, y=0},
-                    z_index = 1,
-                    number = color,
-                    style = 0
-                }))
-            else
-                table.insert(tasks.hud[name], player:hud_add({
-                    type = "text",
-                    position = {x=0.075, y=0.05 + (0.025 * i)},
-                    name = task.name,
-                    scale = {x = 1, y = 1},
-                    text = states[index].title,
-                    alignment = {x=0, y=0},
-                    z_index = 1,
-                    number = color,
-                    style = 0
-                }))
+                if i == 1 then
+                    table.insert(tasks.hud[name], player:hud_add({
+                        type = "text",
+                        position = {x=0.075, y=0.05 + (0.025 * i)},
+                        name = task.name,
+                        scale = {x = 1, y = 1},
+                        text = S("Communications disabled!"),
+                        alignment = {x=0, y=0},
+                        z_index = 1,
+                        number = 0xffff00,
+                        style = 0
+                    }))
+                end
             end
         end
         ::continue::

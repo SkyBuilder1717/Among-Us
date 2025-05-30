@@ -30,7 +30,8 @@ settings = {
             type = "int",
             default = 45,
             min = 1, 
-            max = 60
+            max = 60,
+            subfix = "second(-s)"
         }
     },
     colors = {
@@ -102,6 +103,9 @@ settings = {
 }
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
+
+util = dofile(modpath.."/util.lua")
+
 local S = core.get_translator(modname)
 
 for color, def in pairs(settings.colors) do
@@ -114,6 +118,7 @@ for color, def in pairs(settings.colors) do
 end
 
 dofile(modpath.."/api.lua")
+dofile(modpath.."/vents.lua")
 dofile(modpath.."/skins.lua")
 dofile(modpath.."/customization.lua")
 dofile(modpath.."/button.lua")
@@ -149,6 +154,10 @@ function update_settings_ui(player)
     for name, setting in pairs(settings.lobby) do
         local value = settings.get_setting(name)
         text = text .. setting.title..": " .. value
+        local subfix = setting.subfix
+        if subfix then
+            text = text.." "..subfix
+        end
         local auto = setting.auto
         if auto and (auto < value) then
             text = text.." (Auto: " .. auto .. ")"
@@ -193,7 +202,8 @@ core.register_on_joinplayer(function(player)
 
 	player:hud_set_hotbar_image("gui_hotbar.png")
 	player:hud_set_hotbar_selected_image("gui_hotbar_selected.png")
-    
+    player:hud_set_flags({minimap = false, minimap_radar = false})
+
 	settings.add_interface(player)
     for _, player in pairs(core.get_connected_players()) do
         update_settings_ui(player)
@@ -207,6 +217,7 @@ core.register_on_leaveplayer(function(_)
 end)
 
 core.after(0, function()
+    core.set_timeofday(0.5)
     core.place_schematic({x = -70, y = 0, z = -25}, modpath.."/schematics/ship.mts", 0, {}, true, '')
     settings.restore("skeld")
 end)
@@ -214,12 +225,12 @@ end)
 core.register_chatcommand("vote", {
     description = "Vote, while meetings!",
     func = function(name, param)
-        if settings.meeting_started then
+        local plr = core.get_player_by_name(name)
+        if settings.started and settings.meeting_started and not (plr:get_properties().visual_size.x < 1) then
             if settings.meeting.status ~= "voting" then
                 return false, S("Wait until Voting time!")
             else
-                local player = core.get_player_by_name(param)
-                if not player then return false, S("Player not found!") end
+                if not settings.meeting.players[param] then return false, S("Player not found!") end
                 if settings.meeting.players[name].voted then return false, S("You already voted!") end
                 settings.meeting.players[name].voted = true
                 local color = settings.players[name]
@@ -234,24 +245,27 @@ core.register_chatcommand("vote", {
 })
 
 core.register_tool("settings:knife", {
-    description = S("Kill!"),
+    description = S("Knife (Punch to Kill)"),
     inventory_image = "settings_knife.png",
     on_use = function(itemstack, player, pointed_thing)
         local player_name = player:get_player_name()
-        local meta = itemstack:get_meta()
-        if meta:get_int("among_us_cooldown") > 0 then
+        local meta = player:get_meta()
+        if meta:get_int("among_us_cooldown") < 0 then
             core.chat_send_player(player_name, "Wait for cooldown!")
-        else
+        elseif settings.started and not settings.meeting_started then
             if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
                 local victim = pointed_thing.ref
                 settings.kill(victim:get_player_name())
                 core.sound_play("kill", {to_player = player_name})
-                meta:set_int("among_us_cooldown", 1)
+                meta:set_int("among_us_cooldown", -1)
                 core.after(settings.get_setting("kill_cooldown"), function()
                     meta:set_int("among_us_cooldown", 0)
-                    core.chat_send_player(player_name, "You can use Kill! again.")
+                    if settings.started and not settings.meeting_started then
+                        core.chat_send_player(player_name, "You can kill again.")
+                    end
                 end)
             end
         end
-    end
+    end,
+    on_drop = function(itemstack, dropper, pos) return itemstack end
 })

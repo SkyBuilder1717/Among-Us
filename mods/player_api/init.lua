@@ -38,8 +38,8 @@ core.register_on_joinplayer(function(player)
 	player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
 
 	local inv = player:get_inventory()
+	inv:set_list("main", {})
 	inv:set_size("hand", 1)
-	inv:set_stack("main", 1, "")
 	player_api.set_model(player, "character.b3d")
 	player:set_properties({show_on_minimap = false})
 	-- player:set_physics_override({
@@ -71,6 +71,7 @@ core.register_on_leaveplayer(function(player)
     settings.roles[name] = nil
     settings.hud[name] = nil
 	settings.meeting.players[name] = nil
+	settings.player_positions[name] = nil
 	settings.play_sound("leaving")
 end)
 

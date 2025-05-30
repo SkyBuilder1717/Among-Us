@@ -1,3 +1,5 @@
+local S = core.get_translator("settings")
+
 -- Map Decoration
 
 core.register_node("maps:metal", {
@@ -374,7 +376,19 @@ core.register_node("maps:numpad", {
 		type = "wallmounted",
 	},
 	legacy_wallmounted = true,
-	on_rightclick = tasks.on_rightclick
+	on_rightclick = function(pos, node, player, stack, pointed_thing)
+		if settings.active_sabotage and settings.current_sabotage == "oxygen" and not (player:get_properties().visual_size.x < 1) then
+			settings.reactor_hands = settings.reactor_hands + 1
+			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
+		end
+		if settings.reactor_hands > 1 then
+			settings.active_sabotage = false
+			core.chat_send_all(core.colorize("lime", "Oxygen leaking fixed!"))
+			core.after(30, function()
+				settings.current_sabotage = nil
+			end)
+		end
+	end
 })
 
 core.register_node("maps:electro_timing", {
@@ -388,7 +402,22 @@ core.register_node("maps:electro_timing", {
 		type = "wallmounted",
 	},
 	legacy_wallmounted = true,
-	on_rightclick = tasks.on_rightclick
+	on_rightclick = function(pos, node, player, stack, pointed_thing)
+		if (pos.x == -19 and pos.y == 2 and pos.z == -32) and settings.current_sabotage == "light" and not (player:get_properties().visual_size.x < 1) then
+			core.set_timeofday(0.5)
+			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
+			for name, id in pairs(settings.black_screen) do
+				local player = core.get_player_by_name(name)
+				player:hud_remove(id)
+			end
+			settings.black_screen = {}
+			core.after(15, function()
+				settings.current_sabotage = nil
+			end)
+		else
+			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
+		end
+	end
 })
 
 core.register_node("maps:transfer", {
@@ -535,7 +564,20 @@ core.register_node("maps:reactor_hand", {
 	selection_box = {
 		type = "wallmounted",
 	},
-	legacy_wallmounted = true
+	legacy_wallmounted = true,
+	on_rightclick = function(pos, node, player, stack, pointed_thing)
+		if settings.active_sabotage and settings.current_sabotage == "reactor" and not (player:get_properties().visual_size.x < 1) then
+			settings.reactor_hands = settings.reactor_hands + 1
+			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
+		end
+		if settings.reactor_hands > 1 then
+			settings.active_sabotage = false
+			core.chat_send_all(core.colorize("lime", "Reactor melting fixed!"))
+			core.after(30, function()
+				settings.current_sabotage = nil
+			end)
+		end
+	end
 })
 
 core.register_node("maps:locker", {
@@ -588,7 +630,7 @@ core.register_node("maps:button", {
 	},
 	on_rightclick = function(_, _, player)
 		local name = player:get_player_name()
-		if not settings.meeting_started then
+		if settings.started and not settings.meeting_started and not (settings.active_sabotage and settings.current_sabotage) and not (player:get_properties().visual_size.x < 1) then
 			settings.show_button_menu(name)
 		end
 	end
@@ -600,7 +642,18 @@ core.register_node("maps:communication", {
 	sounds = maps.node_sound_defaults(),
 	mesh = "maps_communication.obj",
 	paramtype = "light",
-	paramtype2 = "facedir"
+	paramtype2 = "facedir",
+	on_rightclick = function(_, _, player)
+		local name = player:get_player_name()
+		if settings.active_sabotage and settings.current_sabotage == "communication" and not (player:get_properties().visual_size.x < 1) then
+			settings.active_sabotage = false
+			core.chat_send_all(core.colorize("lime", "Communications fixed!"))
+			tasks.update_hud()
+			core.after(30, function()
+				settings.current_sabotage = nil
+			end)
+		end
+	end
 })
 
 core.register_node("maps:oxygen_title", {
@@ -629,8 +682,8 @@ core.register_node("maps:vent", {
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
-		if settings.roles[name] == "impostor" then
-
+		if (settings.roles[name] == "impostor") and not (player:get_properties().visual_size.x < 1) then
+			settings.show_vents_menu(name, pos)
 		else
 			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end
