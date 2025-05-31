@@ -165,7 +165,7 @@ end
 
 function settings.start_game()
     local impostors = settings.get_setting("impostors")
-    local players = core.get_connected_players()
+    local players = table.copy(core.get_connected_players())
     settings.play_sound("role")
     for i = 1, impostors do
         local index = math.random(1, #players)
@@ -261,7 +261,7 @@ function settings.finish_voting()
     core.chat_send_all("---")
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        if not (settings.roles[name] == "impostor") and not (player:get_properties().visual_size.x < 1) then
+        if settings.roles[name] == "impostor" and not (player:get_properties().visual_size.x < 1) then
             local inv = player:get_inventory()
             if inv:set_stack("main", 1, "settings:knife") then
                 local itemstack = inv:get_stack("main", 1)
