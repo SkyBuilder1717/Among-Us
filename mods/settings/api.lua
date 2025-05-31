@@ -360,8 +360,14 @@ function settings.start_timer_two()
         core.after(i, function()
             settings.meeting.time = settings.meeting.time - 1
             settings.update_interface()
-            for name, name settings.meeting.players
-            if settings.meeting.time < 1 then
+            local count = #settings.meeting.players
+            local ii = 0
+            for name, def in pairs(settings.meeting.players) do
+                if def.voted then
+                    ii = ii + 1
+                end
+            end
+            if (ii == count) or (settings.meeting.time < 1) then
                 settings.finish_voting()
             end
         end)
