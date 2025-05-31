@@ -1,15 +1,10 @@
 local FORMNAME = "settings:laptop_custom"
 local t = table.insert
 
-local function admin(name)
-    local sname = core.settings:get("name")
-    return (name == sname) or core.check_player_privs(name, "server")
-end
-
 function settings.show_customization_menu(name)
     local player = core.get_player_by_name(name)
     if not player then return end
-    if not admin(name) then return end
+    if not util.admin(name) then return end
     local formspec = {
         "formspec_version[7]",
         "size[8,8]",
@@ -71,7 +66,7 @@ end
 core.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= FORMNAME then return end
     local player_name = player:get_player_name()
-    if admin(player_name) then return end
+    if not util.admin(player_name) then return end
     if fields.quit then
         core.sound_play("selected", {to_player = player_name})
         return

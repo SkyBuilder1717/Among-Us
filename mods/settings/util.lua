@@ -59,4 +59,9 @@ function funcs.remove(t, val)
     end
 end
 
+function funcs.admin(name)
+    local sname = core.settings:get("name")
+    return (name == sname) or core.check_player_privs(name, "server")
+end
+
 return funcs

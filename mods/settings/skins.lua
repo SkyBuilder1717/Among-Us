@@ -1,5 +1,5 @@
 local FORMNAME = "settings:laptop_skins"
-local admin = core.settings:get("name")
+
 
 function settings.show_skins_menu(name)
     local player = core.get_player_by_name(name)
@@ -48,7 +48,7 @@ function settings.show_skins_menu(name)
         end
     end
     table.insert(formspec, "image_button[1,0.45;2.75,0.75;gui_buttonbg_pressed.png;skins;Player;true;true;gui_buttonbg_hover.png]")
-    if admin == name then
+    if util.admin(name) then
         table.insert(formspec, "image_button[4.25,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
@@ -69,7 +69,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     if fields.skins then
         core.sound_play("selected", {to_player = name})
     end
-    if fields.customization and (admin == name) then
+    if fields.customization and util.admin(name) then
         core.sound_play("selected", {to_player = name})
         settings.show_customization_menu(name)
     end
