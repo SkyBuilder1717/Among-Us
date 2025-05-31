@@ -1,5 +1,6 @@
 local BLACKLIST = {
-    "Feros"
+    "Feros",
+    "superstickman"
 }
 
 local modname = core.get_current_modname()
