@@ -174,6 +174,14 @@ function settings.start_game()
         local inv = player:get_inventory()
         inv:set_list("main", {})
     end
+    
+    local impostors_table = {}
+    for pname, prole in pairs(settings.roles) do
+        if prole == "impostor" then
+            table.insert(impostors_table, pname)
+        end
+    end
+
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
         player:hud_remove(settings.hud[name])
@@ -182,14 +190,8 @@ function settings.start_game()
             nametag_color = {r=0,g=0,b=0,a=0}
         })
         local role = settings.tell_role(name)
-        local impostors_table = {}
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
-            for pname, prole in pairs(settings.roles) do
-                if prole == "impostor" then
-                    table.insert(impostors_table, pname)
-                end
-            end
             core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors_table, ", ")))))
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
