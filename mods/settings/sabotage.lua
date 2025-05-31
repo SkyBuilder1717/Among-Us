@@ -188,8 +188,8 @@ core.register_chatcommand("close_door", {
                         local pos2 = d[2]
                         util.fill_area(pos1, pos2, "air")
                     end
+                    util.play_sound(def.sounds, true)
                 end
-                util.play_sound(def.sounds, true)
                 core.after(15, function()
                     util.remove(closed_rooms, param)
                 end)
