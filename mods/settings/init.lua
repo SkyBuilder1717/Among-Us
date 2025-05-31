@@ -256,7 +256,9 @@ core.register_tool("settings:knife", {
         elseif settings.started and not settings.meeting_started then
             if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
                 local victim = pointed_thing.ref
-                settings.kill(victim:get_player_name())
+                local vname = victim:get_player_name()
+                if settings.roles[vname] == "impostor" then return end
+                settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
                 meta:set_int("among_us_cooldown", -1)
                 core.after(settings.get_setting("kill_cooldown"), function()

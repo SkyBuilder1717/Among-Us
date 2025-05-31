@@ -257,20 +257,13 @@ function settings.finish_voting()
         end
     elseif tie then
         core.chat_send_all(S("No one was ejected. (Tie)"))
+        most_voted = nil
     else
         core.chat_send_all(S("No one was ejected."))
     end
     core.chat_send_all("---")
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        if settings.roles[name] == "impostor" and not (player:get_properties().visual_size.x < 1) then
-            local inv = player:get_inventory()
-            if inv:set_stack("main", 1, "settings:knife") then
-                local itemstack = inv:get_stack("main", 1)
-                local meta = itemstack:get_meta()
-                meta:set_int("among_us_cooldown", 0)
-            end
-        end
         player:hud_remove(settings.meeting.hud[name])
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
@@ -392,8 +385,6 @@ function settings.emergency_meeting(name, dead)
         settings.current_sabotage = nil
     end
     for _, player in pairs(core.get_connected_players()) do
-        local inv = player:get_inventory()
-        inv:set_list("main", {})
         local name = player:get_player_name()
         if not (player:get_properties().visual_size.x < 1) then
             settings.meeting.players[name] = {voted = false, votings = 0}
