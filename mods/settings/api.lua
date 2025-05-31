@@ -157,10 +157,7 @@ function settings.tell_role(name)
         color = "#959a9e"
     end
     core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(util.first(role)))))
-    if #impostors > 1 then
-        core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors, ", ")))))
-    end
-    return role
+    return role, impostors
 end
 
 function settings.start_game()
@@ -192,8 +189,12 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        if settings.tell_role(name) == "impostor" then
+        local role, impostors = settings.tell_role(name)
+        if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
+            if #impostors > 1 then
+                core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors, ", ")))))
+            end
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
         end
@@ -206,10 +207,12 @@ end
 function settings.update_interface()
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        if settings.meeting.status == "discuss" then
-            player:hud_change(settings.meeting.hud[name], "text", S("Discuss! Time: @1s", settings.meeting.time))
-        else
-            player:hud_change(settings.meeting.hud[name], "text", S("Voting time! Time: @1s", settings.meeting.time))
+        if settings.meeting.hud[name] then
+            if settings.meeting.status == "discuss" then
+                player:hud_change(settings.meeting.hud[name], "text", S("Discuss! Time: @1s", settings.meeting.time))
+            else
+                player:hud_change(settings.meeting.hud[name], "text", S("Voting time! Time: @1s", settings.meeting.time))
+            end
         end
     end
     if settings.meeting.status == "discuss" and settings.meeting.time < 1 then
@@ -357,6 +360,7 @@ function settings.start_timer_two()
         core.after(i, function()
             settings.meeting.time = settings.meeting.time - 1
             settings.update_interface()
+            for name, name settings.meeting.players
             if settings.meeting.time < 1 then
                 settings.finish_voting()
             end
