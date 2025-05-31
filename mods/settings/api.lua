@@ -159,9 +159,11 @@ function settings.start_game()
     for i = 1, impostors do
         local index = math.random(1, #players)
         local plr = players[index]
-        local pname = plr:get_player_name()
-        settings.roles[pname] = "impostor"
-        settings.cooldown[pname] = nil
+        local player_name = plr:get_player_name()
+        settings.roles[player_name] = "impostor"
+        settings.cooldown[player_name] = nil
+        local inv = plr:get_inventory()
+	    inv:set_stack("main", 1, "settings:knife")
         table.remove(players, index)
     end
     for _, player in pairs(players) do
