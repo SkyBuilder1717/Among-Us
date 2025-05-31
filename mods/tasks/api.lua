@@ -136,7 +136,6 @@ function tasks.update_hud()
     for name, new_tasks in pairs(tasks.players) do
         local player = core.get_player_by_name(name)
         tasks.reset_hud(name)
-        tasks.show_taskbar(player)
         if not (settings.roles[name] == "impostor") then
             for i, task in ipairs(new_tasks) do
                 local index = task.index + 1
@@ -214,6 +213,7 @@ function tasks.update_hud()
                 end
             end
         end
+        tasks.show_taskbar(player)
     end
 end
 

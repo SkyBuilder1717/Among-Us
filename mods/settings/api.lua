@@ -338,13 +338,7 @@ function settings.end_game()
         local player = core.get_player_by_name(name)
         player:hud_remove(id)
     end
-    if tasks.hud[name] then
-        for name, id in pairs(tasks.hud[name]) do
-            local player = core.get_player_by_name(name)
-            player:hud_remove(id)
-        end
-    end
-    tasks.hud = {}
+    tasks.reset_hud(name)
     settings.black_screen = {}
     settings.meeting.players = {}
     settings.meeting.hud = {}
