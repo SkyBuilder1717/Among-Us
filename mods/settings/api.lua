@@ -191,8 +191,10 @@ function settings.start_game()
     get_impostors()
     local impostors_table = {}
     for pname, prole in pairs(settings.roles) do
+        local color = settings.players[pname]
+        local hex = settings.colors[color][1]
         if prole == "impostor" then
-            table.insert(impostors_table, pname)
+            table.insert(impostors_table, core.colorize(hex, pname))
         end
     end
 
@@ -206,7 +208,7 @@ function settings.start_game()
         local role = settings.tell_role(name)
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
-            core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors_table, ", ")))))
+            core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", table.concat(impostors_table, ", "))))
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
         end

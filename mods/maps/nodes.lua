@@ -408,7 +408,9 @@ core.register_node("maps:electro_timing", {
 			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
 			for name, id in pairs(settings.black_screen) do
 				local player = core.get_player_by_name(name)
-				player:hud_remove(id)
+				if player then
+					player:hud_remove(id)
+				end
 			end
 			settings.black_screen = {}
 			core.after(15, function()
