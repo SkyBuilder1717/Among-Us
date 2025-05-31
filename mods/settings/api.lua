@@ -225,6 +225,7 @@ end
 function settings.finish_voting()
     core.chat_send_all("---")
     local most_voted = nil
+    settings.meeting.time = 0
     local max_votes = 0
     local tie = false
 
@@ -358,17 +359,19 @@ function settings.start_timer_two()
     settings.meeting.time = 45
     for i = 1, settings.meeting.time do
         core.after(i, function()
-            settings.meeting.time = settings.meeting.time - 1
-            settings.update_interface()
-            local count = #settings.meeting.players
-            local ii = 0
-            for name, def in pairs(settings.meeting.players) do
-                if def.voted then
-                    ii = ii + 1
+            if settings.meeting.time > 0 then
+                settings.meeting.time = settings.meeting.time - 1
+                settings.update_interface()
+                local count = #settings.meeting.players
+                local ii = 0
+                for name, def in pairs(settings.meeting.players) do
+                    if def.voted then
+                        ii = ii + 1
+                    end
                 end
-            end
-            if (ii == count) or (settings.meeting.time < 1) then
-                settings.finish_voting()
+                if (ii == count) or (settings.meeting.time < 1) then
+                    settings.finish_voting()
+                end
             end
         end)
     end
