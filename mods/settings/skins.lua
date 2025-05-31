@@ -13,8 +13,8 @@ function settings.show_skins_menu(name)
     local i = 0
     for color, hex in pairs(settings.colors) do
         i = i + 1
-        local x_pos = 4 + ((i - 1) % 2) * 1.1
-        local row_number = math.floor(((i - 1) * 2) / 4)
+        local x_pos = 4 + ((i - 1) % 3) * 1.1
+        local row_number = math.floor((i - 1) / 3)
         local y_pos = 1.5 + (row_number * 1.1)
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
         if settings.is_color_available(color) then
