@@ -106,7 +106,11 @@ function settings.get_setting(name)
         return setting.default
     else
         if setting.type == "int" then
-            return tonumber(value)
+            if setting.auto == value then
+                return setting.auto
+            else
+                return tonumber(value)
+            end
         else
             return value
         end
