@@ -80,6 +80,10 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         core.chat_send_player(player_name, "Not enough players!")
         return
     end
+    if fields.customization then
+        core.sound_play("selected", {to_player = player_name})
+        return
+    end
     if fields.skins then
         settings.show_skins_menu(player_name)
         core.sound_play("selected", {to_player = player_name})
