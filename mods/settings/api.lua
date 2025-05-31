@@ -208,7 +208,7 @@ function settings.start_game()
         local role = settings.tell_role(name)
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
-            core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", ")))))
+            core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
         end
