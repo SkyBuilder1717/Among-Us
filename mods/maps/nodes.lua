@@ -381,7 +381,7 @@ core.register_node("maps:numpad", {
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
 		end
-		if settings.reactor_hands > 1 then
+		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
 			core.chat_send_all(core.colorize("lime", "Oxygen leaking fixed!"))
 			core.after(30, function()
@@ -570,7 +570,7 @@ core.register_node("maps:reactor_hand", {
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
 		end
-		if settings.reactor_hands > 1 then
+		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
 			core.chat_send_all(core.colorize("lime", "Reactor melting fixed!"))
 			core.after(30, function()

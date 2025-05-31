@@ -317,7 +317,6 @@ function settings.end_game()
         if meeting_hud then
             player:hud_remove(meeting_hud)
         end
-        tasks.reset_hud(name)
         player:set_properties({
             visual_size = {x = 1, y = 1, z = 1},
             nametag_color = {r=255,g=255,b=255,a=255},
@@ -331,6 +330,11 @@ function settings.end_game()
         local player = core.get_player_by_name(name)
         player:hud_remove(id)
     end
+    for name, id in pairs(tasks.hud) do
+        local player = core.get_player_by_name(name)
+        player:hud_remove(id)
+    end
+    tasks.hud = {}
     settings.black_screen = {}
     settings.meeting.players = {}
     settings.meeting.hud = {}
@@ -362,6 +366,7 @@ function settings.start_timer_two()
 end
 
 function settings.emergency_meeting(name, dead)
+    settings.meeting.players = {}
     core.chat_send_all("---")
     local color = settings.players[name]
     local hex = settings.colors[color][1]

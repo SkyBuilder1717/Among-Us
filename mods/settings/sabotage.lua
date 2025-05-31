@@ -135,7 +135,7 @@ function settings.sabotage()
         settings.sabotage()
         if settings.active_sabotage and (settings.current_sabotage == "reactor" or settings.current_sabotage == "oxygen") then
             timer = timer - 1
-            if timer < 1 then
+            if timer < 0 then
                 if settings.current_sabotage == "reactor" then
                     core.chat_send_all(S("Reactor melted!").." "..core.colorize("red", S("Impostors win!")))
                 elseif settings.current_sabotage == "oxygen" then

@@ -66,3 +66,16 @@ core.register_on_prejoinplayer(function(name)
 		return "Game is already started! Please, join later!"
 	end
 end)
+
+core.register_on_mods_loaded(function()
+	core.unregister_chatcommand("msg")
+	core.unregister_chatcommand("me")
+	core.unregister_chatcommand("kill")
+	core.unregister_chatcommand("clear_mobs")
+	core.unregister_chatcommand("clearinv")
+	core.unregister_chatcommand("setpassword")
+	core.unregister_chatcommand("teleport")
+	core.unregister_chatcommand("pulverize")
+	core.unregister_chatcommand("days")
+	core.unregister_chatcommand("clearpassword")
+end)
