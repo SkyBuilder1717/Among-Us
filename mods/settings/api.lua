@@ -333,12 +333,12 @@ function settings.end_game()
             makes_footstep_sound = true
         })
         settings.add_interface(player)
+        tasks.reset_hud(name)
     end
     for name, id in pairs(settings.black_screen) do
         local player = core.get_player_by_name(name)
         player:hud_remove(id)
     end
-    tasks.reset_hud(name)
     settings.black_screen = {}
     settings.meeting.players = {}
     settings.meeting.hud = {}
