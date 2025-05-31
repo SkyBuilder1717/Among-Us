@@ -347,6 +347,8 @@ end
 
 function settings.end_game()
     settings.started = false
+    settings.current_sabotage = nil
+    settings.active_sabotage = false
     settings.roles = {}
     settings.hud = {}
     for _, player in pairs(core.get_connected_players()) do
