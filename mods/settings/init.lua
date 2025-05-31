@@ -56,7 +56,7 @@ settings = {
         green = {
             "#36c612",
             "#0da615",
-            "#035c09",
+            "#0c7a14",
             "#15b90f"
         },
         dark_green = {
