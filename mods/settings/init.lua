@@ -223,7 +223,8 @@ core.after(0, function()
 end)
 
 core.register_chatcommand("vote", {
-    description = "Vote, while meetings!",
+    description = S("Vote, while meetings!"),
+    params = S("<player>"),
     func = function(name, param)
         local plr = core.get_player_by_name(name)
         if settings.started and settings.meeting_started and not (plr:get_properties().visual_size.x < 1) then
@@ -251,7 +252,7 @@ core.register_tool("settings:knife", {
         local player_name = player:get_player_name()
         local meta = player:get_meta()
         if meta:get_int("among_us_cooldown") < 0 then
-            core.chat_send_player(player_name, "Wait for cooldown!")
+            core.chat_send_player(player_name, S("Wait for cooldown!"))
         elseif settings.started and not settings.meeting_started then
             if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
                 local victim = pointed_thing.ref
@@ -261,7 +262,7 @@ core.register_tool("settings:knife", {
                 core.after(settings.get_setting("kill_cooldown"), function()
                     meta:set_int("among_us_cooldown", 0)
                     if settings.started and not settings.meeting_started then
-                        core.chat_send_player(player_name, "You can kill again.")
+                        core.chat_send_player(player_name, S("You can kill again."))
                     end
                 end)
             end
