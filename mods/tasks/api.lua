@@ -249,5 +249,7 @@ core.register_on_leaveplayer(function(player)
     local name = player:get_player_name()
     tasks.players[name] = nil
     tasks.hud[name] = nil
-    tasks.update_hud()
+    if settings.started then
+        tasks.update_hud()
+    end
 end)
