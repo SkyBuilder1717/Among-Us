@@ -218,6 +218,24 @@ function settings.start_game()
     settings.started = true
 end
 
+core.register_chatcommand("teammates", {
+    description = S("Shows your alive teammates as the impostor."),
+    func = function(name, param)
+        if settings.started and (settings.roles[name] == "impostor") then
+            local impostors_table = {}
+            for pname, prole in pairs(settings.roles) do
+                local color = settings.players[pname]
+                local hex = settings.colors[color][1]
+                local player = core.get_player_by_name(pname)
+                if (prole == "impostor") and not (player:get_properties().visual_size.x < 1) then
+                    table.insert(impostors_table, core.colorize(hex, pname))
+                end
+            end
+            core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
+        end
+    end
+})
+
 function settings.update_interface()
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
