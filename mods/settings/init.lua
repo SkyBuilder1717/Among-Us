@@ -231,8 +231,8 @@ core.register_chatcommand("vote", {
             if settings.meeting.status ~= "voting" then
                 return false, S("Wait until Voting time!")
             else
-                if not settings.meeting.players[param] then return false, S("Player not found!") end
                 if settings.meeting.players[name].voted then return false, S("You have already voted!") end
+                if not settings.meeting.players[param] then return false, S("Player not found!") end
                 settings.meeting.players[name].voted = true
                 local color = settings.players[name]
                 local hex = settings.colors[color][1]
