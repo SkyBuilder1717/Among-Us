@@ -233,11 +233,11 @@ core.register_chatcommand("reactor", {
     description = "Sabotages reactor",
     func = function(name, param)
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
-            timer = 30
+            timer = settings.get_setting("sabotage_time")
             settings.current_sabotage = "reactor"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", "Reactor melting! 30 seconds until game over!"))
+            core.chat_send_all(core.colorize("yellow", "Reactor melting! @1 seconds until game over!", settings.get_setting("sabotage_time")))
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end
@@ -247,11 +247,11 @@ core.register_chatcommand("oxygen", {
     description = "Sabotages oxygen",
     func = function(name, param)
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
-            timer = 30
+            timer = settings.get_setting("sabotage_time")
             settings.current_sabotage = "oxygen"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", "Oxygen leaking! 30 seconds until game over!"))
+            core.chat_send_all(core.colorize("yellow", "Oxygen leaking! @1 seconds until game over!", settings.get_setting("sabotage_time")))
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end

@@ -32,6 +32,14 @@ settings = {
             min = 1, 
             max = 60,
             subfix = "second(-s)"
+        },
+        sabotage_time = {
+            title = "Sabotage time",
+            type = "int",
+            default = 30,
+            min = 15, 
+            max = 45,
+            subfix = "second(-s)"
         }
     },
     colors = {
