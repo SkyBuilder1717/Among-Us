@@ -8,12 +8,12 @@ function settings.show_skins_menu(name)
     local formspec = {
         "formspec_version[7]",
         "size[8,8]",
-        "model[0,2;5,5;preview;character.b3d;", core.formspec_escape(table.concat(player_api.get_textures(player), ",")), ";0,180;false;true;0,79;30]"
+        "model[0,2;4,5;preview;character.b3d;", core.formspec_escape(table.concat(player_api.get_textures(player), ",")), ";0,180;false;true;0,79;30]"
     }
     local i = 0
     for color, hex in pairs(settings.colors) do
         i = i + 1
-        local x_pos = 5 + ((i - 1) % 2) * 1.1
+        local x_pos = 4 + ((i - 1) % 2) * 1.1
         local row_number = math.floor(((i - 1) * 2) / 4)
         local y_pos = 1.5 + (row_number * 1.1)
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
