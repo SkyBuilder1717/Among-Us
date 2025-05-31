@@ -12,7 +12,7 @@ core.register_entity("settings:dead_body", {
     initial_properties = {
         hp_max = 1,
         breath_max = 0,
-        physical = false,
+        physical = true,
         collide_with_objects = false,
         collisionbox = {-0.6, 0.0, -0.6, 0.6, 0.3, 0.6},
         selectionbox = {-0.6, 0.0, -0.6, 0.6, 0.3, 0.6, rotate = false},
