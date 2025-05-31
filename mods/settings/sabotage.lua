@@ -211,16 +211,18 @@ core.register_chatcommand("lightning", {
             settings.current_sabotage = "light"
             for _, player in pairs(core.get_connected_players()) do
                 local pname = player:get_player_name()
-                settings.black_screen[pname] = player:hud_add({
-                    type = "image",
-                    position = {x=0.5, y=0.5},
-                    name = "black_screen",
-                    scale = {x = 15, y = 15},
-                    text = "[fill:128x128:0,0:#000000a0",
-                    alignment = {x=0, y=0},
-                    offset = {x=0, y=0},
-                    z_index = 5000
-                })
+                if not (player:get_properties().visual_size.x < 1) or not (settings.roles[pname] == "impostor") then
+                    settings.black_screen[pname] = player:hud_add({
+                        type = "image",
+                        position = {x=0.5, y=0.5},
+                        name = "black_screen",
+                        scale = {x = 15, y = 15},
+                        text = "[fill:128x128:0,0:#000000a0",
+                        alignment = {x=0, y=0},
+                        offset = {x=0, y=0},
+                        z_index = 5000
+                    })
+                end
             end
             core.chat_send_all(core.colorize("yellow", "Light malfunction!"))
         end

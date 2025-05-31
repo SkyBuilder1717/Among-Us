@@ -174,7 +174,7 @@ function settings.start_game()
         local inv = player:get_inventory()
         inv:set_list("main", {})
     end
-    
+
     local impostors_table = {}
     for pname, prole in pairs(settings.roles) do
         if prole == "impostor" then
@@ -269,6 +269,15 @@ function settings.finish_voting()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
+        local inv = player:get_inventory()
+        for i, itemstring in pairs(inv:get_list("main")) do
+            local itemstack = ItemStack(itemstring)
+            if itemstack:get_name() == "settings:knife" then
+                local meta = itemstack:get_meta()
+                meta:set_int("among_us_cooldown", 0)
+                inv:set_stack("main", i, itemstack)
+            end
+        end
     end
     if settings.started and most_voted then
         if not settings.roles[most_voted] == "impostor" then
@@ -335,6 +344,7 @@ function settings.end_game()
         local player = core.get_player_by_name(name)
         player:hud_remove(id)
     end
+    core.set_timeofday(0.5)
     settings.black_screen = {}
     settings.meeting.players = {}
     settings.meeting.hud = {}
