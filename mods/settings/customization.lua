@@ -3,8 +3,7 @@ local t = table.insert
 
 local function admin(name)
     local sname = core.settings:get("name")
-    local frst = core.get_connected_players()[1]:get_player_name()
-    return (name == sname) or (name == frst)
+    return (name == sname) or core.check_player_privs(name, "server")
 end
 
 function settings.show_customization_menu(name)
