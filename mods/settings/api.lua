@@ -250,7 +250,7 @@ function settings.update_interface()
     end
     if settings.meeting.status == "discuss" and settings.meeting.time < 1 then
         settings.meeting.status = "voting"
-        settings.meeting.time = 45
+        settings.meeting.time = 46
         settings.start_timer_two()
     end
 end
@@ -390,7 +390,7 @@ function settings.start_timer()
 end
 
 function settings.start_timer_two()
-    settings.meeting.time = 45
+    settings.meeting.time = 46
     for i = 1, settings.meeting.time do
         core.after(i, function()
             settings.meeting.time = settings.meeting.time - 1
