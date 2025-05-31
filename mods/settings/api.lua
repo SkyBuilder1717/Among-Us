@@ -182,6 +182,8 @@ function settings.start_game()
     for _, player in pairs(players) do
         local name = player:get_player_name()
         settings.roles[name] = "crewmate"
+        local inv = player:get_inventory()
+        inv:set_list("main", {})
     end
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()

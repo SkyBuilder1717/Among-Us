@@ -59,6 +59,7 @@ core.register_on_leaveplayer(function(player)
 	settings.meeting.players[name] = nil
 	settings.player_positions[name] = nil
 	settings.play_sound("leaving")
+	settings.check_end_game()
 end)
 
 core.register_on_prejoinplayer(function(name)
