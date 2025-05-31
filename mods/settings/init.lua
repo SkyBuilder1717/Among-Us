@@ -74,14 +74,14 @@ settings = {
         blue = {
             "#1a45d3",
             "#1c34ac",
-            "#031e5c",
-            "#171e98"
+            "#0a276c",
+            "#1920a3"
         },
-        dark_blue = {
-            "#173597",
-            "#1d2b70",
-            "#04153d",
-            "#15196e"
+        dark_purple = {
+            "#1c1333",
+            "#150d23",
+            "#0a0418",
+            "#1b0d32"
         },
         pink = {
             "#dc30d6",
@@ -117,7 +117,8 @@ settings = {
     players = {},
     roles = {},
     hud = {},
-    formspec = {}
+    formspec = {},
+    cooldown = {}
 }
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
@@ -268,8 +269,7 @@ core.register_tool("settings:knife", {
     inventory_image = "settings_knife.png",
     on_use = function(itemstack, player, pointed_thing)
         local player_name = player:get_player_name()
-        local meta = player:get_meta()
-        if meta:get_int("among_us_cooldown") < 0 then
+        if settings.cooldown[player_name] then
             core.chat_send_player(player_name, S("Wait for cooldown!"))
         elseif settings.started and not settings.meeting_started then
             if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
@@ -278,9 +278,9 @@ core.register_tool("settings:knife", {
                 if settings.roles[vname] == "impostor" then return end
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
-                meta:set_int("among_us_cooldown", -1)
+                settings.cooldown[player_name] = true
                 core.after(settings.get_setting("kill_cooldown"), function()
-                    meta:set_int("among_us_cooldown", 0)
+                    settings.cooldown[player_name] = nil
                     if settings.started and not settings.meeting_started then
                         core.chat_send_player(player_name, S("You can kill again."))
                     end

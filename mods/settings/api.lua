@@ -159,13 +159,9 @@ function settings.start_game()
     for i = 1, impostors do
         local index = math.random(1, #players)
         local plr = players[index]
-        settings.roles[plr:get_player_name()] = "impostor"
-        local inv = plr:get_inventory()
-	    if inv:set_stack("main", 1, "settings:knife") then
-            local itemstack = inv:get_stack("main", 1)
-            local meta = itemstack:get_meta()
-            meta:set_int("among_us_cooldown", 0)
-        end
+        local pname = plr:get_player_name()
+        settings.roles[pname] = "impostor"
+        settings.cooldown[pname] = nil
         table.remove(players, index)
     end
     for _, player in pairs(players) do
@@ -269,15 +265,7 @@ function settings.finish_voting()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        local inv = player:get_inventory()
-        for i, itemstring in pairs(inv:get_list("main")) do
-            local itemstack = ItemStack(itemstring)
-            if itemstack:get_name() == "settings:knife" then
-                local meta = itemstack:get_meta()
-                meta:set_int("among_us_cooldown", 0)
-                inv:set_stack("main", i, itemstack)
-            end
-        end
+        settings.cooldown[name] = nil
     end
     if settings.started and most_voted then
         if not settings.roles[most_voted] == "impostor" then
