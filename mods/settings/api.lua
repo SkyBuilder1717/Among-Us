@@ -161,6 +161,7 @@ function settings.tell_role(name)
 end
 
 local function get_impostors()
+    local impostors = settings.get_setting("impostors")
     local players = table.copy(core.get_connected_players())
     for i = 1, impostors do
         local index = math.random(1, #players)
@@ -186,7 +187,6 @@ local function get_impostors()
 end
 
 function settings.start_game()
-    local impostors = settings.get_setting("impostors")
     settings.play_sound("role")
     get_impostors()
     local impostors_table = {}
