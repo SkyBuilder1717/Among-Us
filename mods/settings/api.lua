@@ -181,7 +181,8 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        local role, impostors_table = settings.tell_role(name)
+        local role = settings.tell_role(name)
+        local impostors_table = {}
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
             for pname, prole in pairs(settings.roles) do
