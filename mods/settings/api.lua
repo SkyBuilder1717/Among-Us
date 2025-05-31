@@ -1,3 +1,7 @@
+local BLACKLIST = {
+    "Feros"
+}
+
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
 local S = core.get_translator(modname)
@@ -156,19 +160,22 @@ function settings.tell_role(name)
     return role
 end
 
-function settings.start_game()
-    local impostors = settings.get_setting("impostors")
+local function get_impostors()
     local players = table.copy(core.get_connected_players())
-    settings.play_sound("role")
     for i = 1, impostors do
         local index = math.random(1, #players)
         local plr = players[index]
         local player_name = plr:get_player_name()
-        settings.roles[player_name] = "impostor"
-        settings.cooldown[player_name] = nil
-        local inv = plr:get_inventory()
-	    inv:set_stack("main", 1, "settings:knife")
-        table.remove(players, index)
+        if util.contain(BLACKLIST, player_name) then
+            get_impostors()
+            return
+        else
+            settings.roles[player_name] = "impostor"
+            settings.cooldown[player_name] = nil
+            local inv = plr:get_inventory()
+            inv:set_stack("main", 1, "settings:knife")
+            table.remove(players, index)
+        end
     end
     for _, player in pairs(players) do
         local name = player:get_player_name()
@@ -176,7 +183,12 @@ function settings.start_game()
         local inv = player:get_inventory()
         inv:set_list("main", {})
     end
+end
 
+function settings.start_game()
+    local impostors = settings.get_setting("impostors")
+    settings.play_sound("role")
+    get_impostors()
     local impostors_table = {}
     for pname, prole in pairs(settings.roles) do
         if prole == "impostor" then
