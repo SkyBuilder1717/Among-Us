@@ -64,10 +64,10 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
                         core.sound_play("task_completed", {to_player = name})
                     end
                 end
+                tasks.update_hud()
             end
         end
     end
-    tasks.update_hud()
 end
 
 function tasks.add_task(name, def)

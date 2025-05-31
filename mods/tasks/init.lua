@@ -85,7 +85,7 @@ tasks.register_task("clean_filter")
 tasks.add_task("clean_filter", {
     text_only = true,
     map = "skeld",
-    states = {{{pos = {x = 13, y = 0, z = -13}, title = "O2: Clean O2 Filter"}}}
+    states = {{{pos = {x = 13, y = 1, z = -13}, title = "O2: Clean O2 Filter"}}}
 })
 
 tasks.register_task("divert_power")
