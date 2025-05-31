@@ -143,21 +143,13 @@ end
 function settings.tell_role(name)
     local role = settings.roles[name]
     local color = "cyan"
-    local impostors = {}
     if role == "impostor" then
         color = "red"
-        for pname, prole in pairs(settings.roles) do
-            if not (pname == name) then
-                if prole == "impostor" then
-                    table.insert(impostors, pname)
-                end
-            end
-        end
     elseif role == "ghost" then
         color = "#959a9e"
     end
     core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(util.first(role)))))
-    return role, impostors
+    return role
 end
 
 function settings.start_game()
@@ -189,12 +181,15 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        local role, impostors = settings.tell_role(name)
+        local role, impostors_table = settings.tell_role(name)
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!"))
-            if #impostors > 1 then
-                core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors, ", ")))))
+            for pname, prole in pairs(settings.roles) do
+                if prole == "impostor" then
+                    table.insert(impostors_table, pname)
+                end
             end
+            core.chat_send_player(name, core.colorize("red", S("Impostors: @1.", core.colorize("white", table.concat(impostors_table, ", ")))))
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
         end
