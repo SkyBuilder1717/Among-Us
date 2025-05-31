@@ -23,20 +23,22 @@ function tasks.register_task(name)
 end
 
 function tasks.inspect_sample(name)
-    for _, task in pairs(tasks.players[name]) do
-        if task.name == "inspect_sample" then
-            minetest.after(1, function()
-                task.index = task.index - 1
-                task.manual = true
-                if task.index > #task.states then
-                    tasks.inspect_sample(name)
-                else
-                    task.index = 0
-                    task.ready = true
-                    task.manual = nil
-                end
-                tasks.update_hud()
-            end)
+    if tasks.players[name] then
+        for _, task in pairs(tasks.players[name]) do
+            if task.name == "inspect_sample" then
+                minetest.after(1, function()
+                    task.index = task.index - 1
+                    task.manual = true
+                    if task.index > #task.states then
+                        tasks.inspect_sample(name)
+                    else
+                        task.index = 0
+                        task.ready = true
+                        task.manual = nil
+                    end
+                    tasks.update_hud()
+                end)
+            end
         end
     end
 end
