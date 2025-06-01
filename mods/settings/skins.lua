@@ -14,11 +14,14 @@ function settings.show_skins_menu(name)
         "model[0,2;4,5;preview;character.b3d;", core.formspec_escape(table.concat(player_api.get_textures(player), ",")), ";0,180;false;true;0,79;30]"
     }
     local i = 0
+    local ypos
+    insert(formspec, "label[4,1.5;Colors]")
     for color, hex in pairs(settings.colors) do
         i = i + 1
         local x_pos = 4 + ((i - 1) % 4) * 0.85
         local row_number = math.floor((i - 1) / 4)
-        local y_pos = 1.5 + (row_number * 0.85)
+        local y_pos = 1.75 + (row_number * 0.85)
+        ypos = y_pos
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
         if settings.is_color_available(color) then
             insert(formspec, "image_button[")
@@ -58,10 +61,15 @@ function settings.show_skins_menu(name)
 
     i = 0
     for name, def in pairs(settings.costumes) do
+        if i == 0 then
+            insert(formspec, "label[4,")
+            insert(formspec, ypos + 1.05)
+            insert(formspec, ";Costumes]")
+        end
         i = i + 1
         local x_pos = 4 + ((i - 1) % 4) * 0.85
         local row_number = math.floor((i - 1) / 4)
-        local y_pos = 5 + (row_number * 0.85)
+        local y_pos = ypos + ((row_number + 1.5) * 0.85)
         local texture = def.icon
         
         if (meta:get_string("_costume") == "" and name == "none") or (meta:get_string("_costume") == name) then
