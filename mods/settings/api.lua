@@ -83,40 +83,81 @@ function settings.set_color(name, color)
     end
     storage:set_string("_player_"..name, color)
     settings.players[name] = color
-    local colors = settings.colors[color]
     local player = core.get_player_by_name(name)
     local meta = player:get_meta()
-    local costume = meta:get_string("_costume")
-    local def = settings.costumes[(costume == "" and "none" or costume)]
-    if not def then
-        def = settings.costumes["none"]
-        meta:set_string("_costume", "")
-    end
-    settings.set_costume(name, costume)
-    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))^visor.png", def.modifier}
-	player_api.set_textures(player, {table.concat(texture)})
-	local inv = player:get_inventory()
+    settings.apply_costumes(name)
+    local inv = player:get_inventory()
     inv:set_stack("hand", 1, "settings:"..color)
     return true
 end
 
-function settings.set_costume(name, costume)
+function settings.add_costume(name, costume)
     local player = core.get_player_by_name(name)
     local meta = player:get_meta()
-    meta:set_string("_costume", costume)
-    local colors = settings.colors[settings.players[name]]
-    local def = settings.costumes[(costume == "" and "none" or costume)]
-    if not def then
-        def = settings.costumes["none"]
-        meta:set_string("_costume", "")
-    end
-    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))^visor.png", def.modifier}
-    if def.mesh then
-        player_api.set_model(player, def.mesh)
+    local costume_list = meta:get_string("_costumes") or ""
+    if costume_list == "" then
+        meta:set_string("_costumes", costume)
     else
-	    player_api.set_model(player, "character.b3d")
+        local exists = false
+        for c in string.gmatch(costume_list, "([^,]+)") do
+            if c == costume then
+                exists = true
+                break
+            end
+        end
+        if not exists then
+            meta:set_string("_costumes", costume_list .. "," .. costume)
+        end
     end
-	player_api.set_textures(player, {table.concat(texture)})
+    settings.apply_costumes(name)
+end
+
+function settings.clear_costumes(name)
+    local player = core.get_player_by_name(name)
+    local meta = player:get_meta()
+    meta:set_string("_costumes", "")
+    settings.apply_costumes(name)
+end
+
+function settings.apply_costumes(name)
+    local player = core.get_player_by_name(name)
+    local meta = player:get_meta()
+    local costume_list = meta:get_string("_costumes")
+    local costumes = {}
+    for costume in string.gmatch(costume_list, "([^,]+)") do
+        table.insert(costumes, costume)
+    end
+    local color = settings.players[name]
+    local colors = settings.colors[color]
+    local texture = {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))^visor.png"}
+    for _, costume in ipairs(costumes) do
+        local def = settings.costumes[costume]
+        if def then
+            table.insert(texture, def.modifier)
+        end
+    end
+    player_api.set_model(player, "character.b3d")
+    player_api.set_textures(player, {table.concat(texture)})
+end
+
+function settings.toggle_costume(name, costume)
+    local player = core.get_player_by_name(name)
+    local meta = player:get_meta()
+    local list = meta:get_string("_costumes")
+    local result = {}
+    local found = false
+    for c in string.gmatch(list, "([^,]+)") do
+        if c == costume then
+            found = true
+        else
+            table.insert(result, c)
+        end
+    end
+    if not found then
+        table.insert(result, costume)
+    end
+    meta:set_string("_costumes", table.concat(result, ","))
+    settings.apply_costumes(name)
 end
 
 function settings.set_setting(name, value)

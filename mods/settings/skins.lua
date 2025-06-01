@@ -7,6 +7,11 @@ function settings.show_skins_menu(name)
     local player = core.get_player_by_name(name)
     if not player then return end
     local meta = player:get_meta()
+    local costume_string = meta:get_string("_costumes")
+    local worn = {}
+    for costume in string.gmatch(costume_string, "([^,]+)") do
+        worn[costume] = true
+    end
     local colors = settings.colors[settings.players[name]]
     local props = player:get_properties()
     local formspec = {
@@ -86,7 +91,7 @@ function settings.show_skins_menu(name)
         local y_pos = ypos + ((row_number + 1.5) * 0.85)
         local texture = def.icon
         
-        if (meta:get_string("_costume") == "" and name == "none") or (meta:get_string("_costume") == name) then
+        if (name == "none" and next(worn) == nil) or worn[name] then
             insert(formspec, "image[")
             insert(formspec, x_pos)
             insert(formspec, ",")
@@ -133,7 +138,11 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     end
     for costume, _ in pairs(settings.costumes) do
         if fields[costume] then
-            settings.set_costume(name, costume)
+            if costume == "none" then
+                settings.clear_costumes(name)
+            else
+                settings.toggle_costume(name, costume)
+            end
             core.sound_play("selected", {to_player = name})
         end
     end
