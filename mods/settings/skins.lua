@@ -13,16 +13,16 @@ function settings.show_skins_menu(name)
     local i = 0
     for color, hex in pairs(settings.colors) do
         i = i + 1
-        local x_pos = 4 + ((i - 1) % 3) * 1.1
+        local x_pos = 4 + ((i - 1) % 3) * 0.85
         local row_number = math.floor((i - 1) / 3)
-        local y_pos = 1.5 + (row_number * 1.1)
+        local y_pos = 1.5 + (row_number * 0.85)
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
         if settings.is_color_available(color) then
             table.insert(formspec, "image_button[")
             table.insert(formspec, x_pos)
             table.insert(formspec, ",")
             table.insert(formspec, y_pos)
-            table.insert(formspec, ";1,1;")
+            table.insert(formspec, ";0.75,0.75;")
             table.insert(formspec, texture)
             table.insert(formspec, "^gui_overlay.png")
             table.insert(formspec, ";")
@@ -36,7 +36,7 @@ function settings.show_skins_menu(name)
             table.insert(formspec, x_pos)
             table.insert(formspec, ",")
             table.insert(formspec, y_pos)
-            table.insert(formspec, ";1,1;")
+            table.insert(formspec, ";0.75,0.75;")
             table.insert(formspec, texture)
             if settings.players[name] == color then
                 table.insert(formspec, "^settings_color_pressed.png")
