@@ -188,6 +188,10 @@ settings = {
         grey_hoodie = {
             modifier = "^costumes_hoodie.png",
             icon = "costumes_hoodie_icon.png"
+        },
+        sunglasses = {
+            modifier = "^costumes_sunglasses.png",
+            icon = "costumes_sunglasses_icon.png"
         }
         -- mini_amogus = {
         --     modifier = "",
