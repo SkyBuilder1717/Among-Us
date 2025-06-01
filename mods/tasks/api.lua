@@ -158,10 +158,11 @@ function tasks.update_hud()
                         index = 1
                         color = 0xFFFFFF
                     end
+                    local ypos = 0.075
                     if #states > 1 and not task.text_only then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
-                            position = {x=0.075, y=0.05 + (0.025 * i)},
+                            position = {x=0.075, y=ypos + (0.025 * i)},
                             name = task.name,
                             scale = {x = 1, y = 1},
                             text = S(states[index].title.." (@1/@2)",
@@ -184,7 +185,7 @@ function tasks.update_hud()
                     elseif task.index > #states then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
-                            position = {x=0.075, y=0.05 + (0.025 * i)},
+                            position = {x=0.075, y=ypos + (0.025 * i)},
                             name = task.name,
                             scale = {x = 1, y = 1},
                             text = S(states[#states].title.." (@1)",
@@ -198,17 +199,17 @@ function tasks.update_hud()
                             type = "waypoint",
                             name = S(states[#states].title.." (@1)",
                                 task.index),
-                            world_pos = states[index].pos,
+                            world_pos = states[#states].pos,
                             z_index = 1,
                             number = color,
                         }))
                     else
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
-                            position = {x=0.075, y=0.05 + (0.025 * i)},
+                            position = {x=0.075, y=ypos + (0.025 * i)},
                             name = task.name,
                             scale = {x = 1, y = 1},
-                            text = states[index].title,
+                            text = S(states[index].title),
                             alignment = {x=0, y=0},
                             z_index = 1,
                             number = color,
@@ -216,8 +217,7 @@ function tasks.update_hud()
                         }))
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "waypoint",
-                            name = task.name,
-                            text = states[index].title,
+                            name = S(states[index].title),
                             world_pos = states[index].pos,
                             z_index = 1,
                             number = color,

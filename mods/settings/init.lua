@@ -153,7 +153,7 @@ settings = {
             modifier = "^costumes_smoking.png",
             icon = "costumes_smoking_icon.png"
         },
-        signal_corrupted = {
+        no_signal = {
             modifier = "^costumes_glitch.png",
             icon = "costumes_glitch_icon.png"
         },
