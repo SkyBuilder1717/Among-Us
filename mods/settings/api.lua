@@ -104,12 +104,13 @@ function settings.set_costume(name, costume)
     meta:set_string("_costume", costume)
     local colors = settings.colors[settings.players[name]]
     local def = settings.costumes[(costume == "" and "none" or costume)]
+    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))", def.modifier, "^visor.png"}
     if def.mesh then
         player_api.set_model(player, def.mesh)
     else
 	    player_api.set_model(player, "character.glb")
     end
-	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..def.modifier.."^visor.png"})
+	player_api.set_textures(player, {table.concat(texture)})
 end
 
 function settings.set_setting(name, value)
