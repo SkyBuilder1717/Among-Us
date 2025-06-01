@@ -11,10 +11,15 @@ function settings.show_button_menu(name)
     core.show_formspec(name, FORMNAME, table.concat(formspec))
 end
 
+settings.button_pressed = false
 core.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= FORMNAME then return end
-    local player_name = player:get_player_name()
+    local name = player:get_player_name()
     if fields.button then
-        settings.emergency_meeting(player_name)
+        if settings.button_pressed then
+            core.chat_send_player(name, "Cooldown for 30 seconds after meeting!")
+            return
+        end
+        settings.emergency_meeting(name)
     end
 end)

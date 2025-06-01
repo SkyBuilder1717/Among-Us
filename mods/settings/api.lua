@@ -249,6 +249,7 @@ function settings.start_game()
     settings.teleport_all()
     tasks.generate_tasks()
     settings.started = true
+    settings.button_pressed = false
 end
 
 core.register_chatcommand("teammates", {
@@ -352,6 +353,10 @@ function settings.finish_voting()
     settings.meeting_started = false
     settings.check_end_game()
     settings.restore("skeld")
+
+    core.after(30, function()
+        settings.button_pressed = false
+    end)
 end
 
 function settings.check_end_game()
@@ -453,6 +458,7 @@ function settings.emergency_meeting(name, dead)
     core.chat_send_all("---")
     settings.restore("skeld_emergency_meeting")
     settings.meeting_started = true
+    settings.button_pressed = true
     settings.teleport_all()
     if (settings.current_sabotage == "reactor" or settings.current_sabotage == "oxygen") then
         settings.active_sabotage = false
