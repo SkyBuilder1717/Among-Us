@@ -185,7 +185,7 @@ settings = {
             modifier = "^costumes_bread.png",
             icon = "costumes_bread_icon.png"
         },
-        blue_hoodie = {
+        grey_hoodie = {
             modifier = "^costumes_hoodie.png",
             icon = "costumes_hoodie_icon.png"
         }
