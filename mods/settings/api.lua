@@ -84,10 +84,10 @@ function settings.set_color(name, color)
     storage:set_string("_player_"..name, color)
     settings.players[name] = color
     local rgb = util.hex(settings.colors[color][1])
+    local player = core.get_player_by_name(name)
     player:set_properties({
         nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255}
     })
-    local player = core.get_player_by_name(name)
     local meta = player:get_meta()
     settings.apply_costumes(name)
     local inv = player:get_inventory()
