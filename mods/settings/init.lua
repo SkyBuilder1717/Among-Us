@@ -169,7 +169,7 @@ settings = {
             modifier = "^costumes_jordan.png",
             icon = "costumes_jordan_icon.png"
         },
-        impsotor = {
+        impostor = {
             modifier = "^costumes_red_eye.png",
             icon = "costumes_red_eye_icon.png"
         }

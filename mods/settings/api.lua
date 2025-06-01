@@ -7,8 +7,7 @@ local BLACKLIST = {
     "Impostor",
     "Sussy-baka",
     "sussy-baka",
-    "superstickman",
-    "Bapt-admin"
+    "superstickman"
 }
 
 local modname = core.get_current_modname()
