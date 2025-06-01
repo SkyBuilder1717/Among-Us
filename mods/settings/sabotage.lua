@@ -206,8 +206,9 @@ core.register_chatcommand("close_door", {
 core.register_chatcommand("lightning", {
     description = "Sabotages light",
     func = function(name, param)
-        if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage then
+        if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
             core.set_timeofday(0)
+            settings.active_sabotage = true
             settings.current_sabotage = "light"
             for _, player in pairs(core.get_connected_players()) do
                 local pname = player:get_player_name()

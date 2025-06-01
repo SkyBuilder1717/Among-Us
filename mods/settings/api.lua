@@ -384,9 +384,10 @@ function settings.end_game()
     settings.roles = {}
     settings.hud = {}
     for _, player in pairs(core.get_connected_players()) do
+        local name = player:get_player_name()
+        core.close_formspec(name, '')
         local inv = player:get_inventory()
 	    inv:set_list("main", {})
-        local name = player:get_player_name()
         local meeting_hud = settings.meeting.hud[name]
         if meeting_hud then
             player:hud_remove(meeting_hud)

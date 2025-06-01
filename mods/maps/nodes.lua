@@ -403,8 +403,9 @@ core.register_node("maps:electro_timing", {
 	},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
-		if (pos.x == -19 and pos.y == 2 and pos.z == -32) and settings.current_sabotage == "light" and not (player:get_properties().visual_size.x < 1) then
+		if (pos.x == -19 and pos.y == 2 and pos.z == -32) and settings.active_sabotage and settings.current_sabotage == "light" and not (player:get_properties().visual_size.x < 1) then
 			core.set_timeofday(0.5)
+			settings.active_sabotage = false
 			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
 			for name, id in pairs(settings.black_screen) do
 				local player = core.get_player_by_name(name)
