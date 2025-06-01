@@ -413,7 +413,9 @@ function settings.end_game()
     end
     for name, id in pairs(settings.black_screen) do
         local player = core.get_player_by_name(name)
-        player:hud_remove(id)
+        if player then
+            player:hud_remove(id)
+        end
     end
     core.set_timeofday(0.5)
     settings.black_screen = {}
