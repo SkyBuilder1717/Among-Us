@@ -47,7 +47,7 @@ settings = {
             "#ffff7e",
             "#d6c06f",
             "#bda164",
-            "#bfaa5c"
+            "#d1b965"
         },
         red = {
             "#db0707",
