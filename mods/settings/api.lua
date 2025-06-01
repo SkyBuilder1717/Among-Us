@@ -326,7 +326,7 @@ function settings.finish_voting()
             })
         end
     elseif tie then
-        if max_votes = 0 then
+        if max_votes == 0 then
             core.chat_send_all(S("No one was ejected. (Skipped)"))
         else
             core.chat_send_all(S("No one was ejected. (Tie)"))
