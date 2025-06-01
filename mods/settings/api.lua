@@ -521,7 +521,7 @@ core.register_on_chat_message(function(name, message)
             return true
         end
         if role then
-            if settings.started and not (plr:get_properties().visual_size.x < 1) and (prole == "impostor") and util.starts(message, "!") then
+            if settings.started and not (plr:get_properties().visual_size.x < 1) and (prole == "impostor") and string.match(message, "^!") then
                 for _, player in pairs(core.get_connected_players()) do
                     local pname = player:get_player_name()
                     local prole = settings.roles[pname]
