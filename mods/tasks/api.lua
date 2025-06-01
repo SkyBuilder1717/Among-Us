@@ -158,7 +158,7 @@ function tasks.update_hud()
                         index = 1
                         color = 0xFFFFFF
                     end
-                    local ypos = 0.075
+                    local ypos = 0.1
                     if #states > 1 and not task.text_only then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
