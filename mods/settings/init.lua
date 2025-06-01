@@ -172,6 +172,10 @@ settings = {
         impostor = {
             modifier = "^costumes_red_eye.png",
             icon = "costumes_red_eye_icon.png"
+        },
+        french_toast = {
+            modifier = "^costumes_bread.png",
+            icon = "costumes_bread_icon.png"
         }
         -- mini_amogus = {
         --     modifier = "",
