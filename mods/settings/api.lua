@@ -1,6 +1,10 @@
 local BLACKLIST = {
     "Feros",
-    "superstickman"
+    "Sussy-Baka",
+    "Sussy-baka",
+    "sussy-baka",
+    "superstickman",
+    "Bapt-admin"
 }
 
 local modname = core.get_current_modname()
@@ -19,7 +23,7 @@ core.register_entity("settings:dead_body", {
         pointable = true,
         visual = "mesh",
         visual_size = {x = 1, y = 1, z = 1},
-        mesh = "character.b3d",
+        mesh = "character.glb",
         textures = {"player_api_mask_OLD.png^visor.png"},
         use_texture_alpha = true,
         is_visible = true,
@@ -36,7 +40,7 @@ core.register_entity("settings:dead_body", {
         show_on_minimap = false
     },
     on_activate = function(self)
-        self.object:set_animation({x = 162, y = 166}, 30, 0, true)
+        self.object:set_animation({x = 5.40, y = 5.57}, 1, 0, true)
     end,
     on_step = function(self)
         if not settings.started or (settings.started and settings.meeting_started) then
@@ -157,6 +161,7 @@ function settings.teleport_all(lobby)
         end
         for _, player in pairs(core.get_connected_players()) do
             player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
+            tasks.reset_hud(player:get_player_name())
         end
     end
 end
@@ -379,7 +384,6 @@ function settings.end_game()
             makes_footstep_sound = true
         })
         settings.add_interface(player)
-        tasks.reset_hud(name)
     end
     for name, id in pairs(settings.black_screen) do
         local player = core.get_player_by_name(name)

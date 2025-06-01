@@ -1,18 +1,18 @@
 dofile(core.get_modpath("player_api") .. "/api.lua")
 
 -- Default player appearance
-player_api.register_model("character.b3d", {
-	animation_speed = 30,
+player_api.register_model("character.glb", {
+	animation_speed = 1,
 	textures = {"player_api_mask_OLD.png^visor.png"},
 	animations = {
 		-- Standard animations.
-		stand     = {x = 0,   y = 79},
-		lay       = {x = 162, y = 166, eye_height = 0.3, override_local = true,
+		stand     = {x = 0,   y = 2.66},
+		lay       = {x = 5.40, y = 5.57, eye_height = 0.3, override_local = true,
 			collisionbox = {-0.6, 0.0, -0.6, 0.6, 0.3, 0.6}},
-		walk      = {x = 168, y = 187},
-		mine      = {x = 189, y = 198},
-		walk_mine = {x = 200, y = 219},
-		sit       = {x = 81,  y = 160, eye_height = 0.8, override_local = true,
+		walk      = {x = 5.60, y = 6.27},
+		mine      = {x = 6.30, y = 6.63},
+		walk_mine = {x = 6.67, y = 7.33},
+		sit       = {x = 2.70,  y = 5.37, eye_height = 0.8, override_local = true,
 			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}}
 	},
 	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
@@ -40,7 +40,7 @@ core.register_on_joinplayer(function(player)
 	local inv = player:get_inventory()
 	inv:set_list("main", {})
 	inv:set_size("hand", 1)
-	player_api.set_model(player, "character.b3d")
+	player_api.set_model(player, "character.glb")
 	player:set_properties({show_on_minimap = false})
 	local name = player:get_player_name()
 	local color = storage:get("_player_"..name)
