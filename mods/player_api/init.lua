@@ -6,12 +6,12 @@ local player_def = {
 	animations = {
 		-- Standard animations.
 		stand     = {x = 0,   y = 2.66},
-		lay       = {x = 5.40, y = 5.57, eye_height = 0.3, override_local = true,
+		lay       = {x = 5.4, y = 5.5, eye_height = 0.3, override_local = true,
 			collisionbox = {-0.6, 0.0, -0.6, 0.6, 0.3, 0.6}},
-		walk      = {x = 5.60, y = 6.27},
-		mine      = {x = 6.30, y = 6.63},
+		walk      = {x = 5.6, y = 6.27},
+		mine      = {x = 6.3, y = 6.63},
 		walk_mine = {x = 6.67, y = 7.33},
-		sit       = {x = 2.70,  y = 5.37, eye_height = 0.8, override_local = true,
+		sit       = {x = 2.7,  y = 5.37, eye_height = 0.8, override_local = true,
 			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}}
 	},
 	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},

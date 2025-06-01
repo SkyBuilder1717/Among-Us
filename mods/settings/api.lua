@@ -40,7 +40,7 @@ core.register_entity("settings:dead_body", {
         show_on_minimap = false
     },
     on_activate = function(self)
-        self.object:set_animation({x = 5.40, y = 5.57}, 1, 0, true)
+        self.object:set_animation({x = 5.4, y = 5.5}, 1, 0, true)
     end,
     on_step = function(self)
         if not settings.started or (settings.started and settings.meeting_started) then
@@ -213,6 +213,8 @@ end
 
 function settings.start_game()
     settings.play_sound("role")
+    settings.restore("skeld")
+    settings.ship()
     get_impostors()
     local impostors_table = {}
     for pname, prole in pairs(settings.roles) do
@@ -402,6 +404,7 @@ function settings.end_game()
     settings.meeting.hud = {}
     settings.teleport_all(true)
     settings.restore("skeld")
+    settings.ship()
 end
 
 function settings.start_timer()

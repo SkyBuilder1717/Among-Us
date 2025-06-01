@@ -278,10 +278,14 @@ core.register_on_leaveplayer(function(_)
     end
 end)
 
+function settings.ship()
+    core.place_schematic({x = -70, y = 0, z = -25}, modpath.."/schematics/ship.mts", 0, {}, true, '')
+end
+
 core.after(0, function()
     core.set_timeofday(0.5)
-    core.place_schematic({x = -70, y = 0, z = -25}, modpath.."/schematics/ship.mts", 0, {}, true, '')
     settings.restore("skeld")
+    settings.ship()
 end)
 
 core.register_chatcommand("vote", {
