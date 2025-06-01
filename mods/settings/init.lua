@@ -43,6 +43,12 @@ settings = {
         }
     },
     colors = {
+        banana = {
+            "#ffff7e",
+            "#d6c06f",
+            "#bda164",
+            "#bfaa5c"
+        },
         red = {
             "#db0707",
             "#a60d0d",
@@ -82,8 +88,8 @@ settings = {
         blue = {
             "#1a45d3",
             "#1c34ac",
-            "#0a276c",
-            "#1920a3"
+            "#0e3988",
+            "#1834a4"
         },
         dark_purple = {
             "#1c1333",

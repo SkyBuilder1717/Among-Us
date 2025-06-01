@@ -1,5 +1,5 @@
+local insert = table.insert
 local FORMNAME = "settings:laptop_skins"
-
 
 function settings.show_skins_menu(name)
     local player = core.get_player_by_name(name)
@@ -18,38 +18,43 @@ function settings.show_skins_menu(name)
         local y_pos = 1.5 + (row_number * 0.85)
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
         if settings.is_color_available(color) then
-            table.insert(formspec, "image_button[")
-            table.insert(formspec, x_pos)
-            table.insert(formspec, ",")
-            table.insert(formspec, y_pos)
-            table.insert(formspec, ";0.75,0.75;")
-            table.insert(formspec, texture)
-            table.insert(formspec, "^gui_overlay.png")
-            table.insert(formspec, ";")
-            table.insert(formspec, color)
-            table.insert(formspec, ";;true;false;")
-            table.insert(formspec, texture)
-            table.insert(formspec, "^settings_color_hover.png^gui_overlay.png")
-            table.insert(formspec, "]")
+            insert(formspec, "image_button[")
+            insert(formspec, x_pos)
+            insert(formspec, ",")
+            insert(formspec, y_pos)
+            insert(formspec, ";0.75,0.75;")
+            insert(formspec, texture)
+            insert(formspec, "^gui_overlay.png")
+            insert(formspec, ";")
+            insert(formspec, color)
+            insert(formspec, ";;true;false;")
+            insert(formspec, texture)
+            insert(formspec, "^settings_color_hover.png^gui_overlay.png")
+            insert(formspec, "]")
+            insert(formspec, "tooltip[")
+            insert(formspec, color)
+            insert(formspec, ";")
+            insert(formspec, S(util.first(color:gsub("_", " "))))
+            insert(formspec, "]")
         else
-            table.insert(formspec, "image[")
-            table.insert(formspec, x_pos)
-            table.insert(formspec, ",")
-            table.insert(formspec, y_pos)
-            table.insert(formspec, ";0.75,0.75;")
-            table.insert(formspec, texture)
+            insert(formspec, "image[")
+            insert(formspec, x_pos)
+            insert(formspec, ",")
+            insert(formspec, y_pos)
+            insert(formspec, ";0.75,0.75;")
+            insert(formspec, texture)
             if settings.players[name] == color then
-                table.insert(formspec, "^settings_color_pressed.png")
+                insert(formspec, "^settings_color_pressed.png")
             else
-                table.insert(formspec, "^settings_color_chosen.png")
+                insert(formspec, "^settings_color_chosen.png")
             end
-            table.insert(formspec, "^gui_overlay.png")
-            table.insert(formspec, "]")
+            insert(formspec, "^gui_overlay.png")
+            insert(formspec, "]")
         end
     end
-    table.insert(formspec, "image_button[1,0.45;2.75,0.75;gui_buttonbg_pressed.png;skins;Player;true;true;gui_buttonbg_hover.png]")
+    insert(formspec, "image_button[1,0.45;2.75,0.75;gui_buttonbg_pressed.png;skins;Player;true;true;gui_buttonbg_hover.png]")
     if util.admin(name) then
-        table.insert(formspec, "image_button[4.25,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
+        insert(formspec, "image_button[4.25,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
     settings.formspec[name] = true
