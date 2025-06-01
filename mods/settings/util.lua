@@ -59,6 +59,15 @@ function funcs.remove(t, val)
     end
 end
 
+function funcs.hex(hex)
+    hex = hex:gsub("#", "")
+    return {
+        r = tonumber(hex:sub(1, 2), 16),
+        g = tonumber(hex:sub(3, 4), 16),
+        b = tonumber(hex:sub(5, 6), 16)
+    }
+end
+
 function funcs.admin(name)
     local sname = core.settings:get("name")
     return (name == sname) or core.check_player_privs(name, "server")

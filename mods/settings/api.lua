@@ -83,6 +83,15 @@ function settings.set_color(name, color)
     end
     storage:set_string("_player_"..name, color)
     settings.players[name] = color
+    local colors = settings.colors[color]
+    local rgb = util.hex(colors[1])
+    player:set_properties({
+        visual_size = {x = 1, y = 1, z = 1},
+        nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255},
+        is_visible = true,
+        pointable = true,
+        makes_footstep_sound = true
+    })
     local player = core.get_player_by_name(name)
     local meta = player:get_meta()
     settings.apply_costumes(name)
@@ -444,9 +453,12 @@ function settings.end_game()
         if meeting_hud then
             player:hud_remove(meeting_hud)
         end
+        local color = settings.players[name]
+        local colors = settings.colors[color]
+        local rgb = util.hex(colors[1])
         player:set_properties({
             visual_size = {x = 1, y = 1, z = 1},
-            nametag_color = {r=255,g=255,b=255,a=255},
+            nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255},
             is_visible = true,
             pointable = true,
             makes_footstep_sound = true
@@ -518,8 +530,11 @@ function settings.emergency_meeting(name, dead)
         if not (player:get_properties().visual_size.x < 1) then
             settings.meeting.players[name] = {voted = false, votings = 0}
             settings.player_positions[name] = nil
+            local color = settings.players[name]
+            local colors = settings.colors[color]
+            local rgb = util.hex(colors[1])
             player:set_properties({
-                nametag_color = {r=255,g=255,b=255,a=255},
+                nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255},
                 visual_size = {x = 1, y = 1, z = 1},
                 is_visible = true,
                 pointable = true,
