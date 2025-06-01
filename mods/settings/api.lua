@@ -1,6 +1,10 @@
 local BLACKLIST = {
     "Feros",
     "Sussy-Baka",
+    "SussyBaka",
+    "Sussybaka",
+    "impostor",
+    "Impostor",
     "Sussy-baka",
     "sussy-baka",
     "superstickman",

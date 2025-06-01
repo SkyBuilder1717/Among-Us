@@ -156,6 +156,18 @@ settings = {
         signal_corrupted = {
             modifier = "^costumes_glitch.png",
             icon = "costumes_glitch_icon.png"
+        },
+        headphones = {
+            modifier = "^costumes_headphones.png",
+            icon = "costumes_headphones_icon.png"
+        },
+        baby_boy = {
+            modifier = "^costumes_baby.png",
+            icon = "costumes_baby_icon.png"
+        },
+        jordan = {
+            modifier = "^costumes_jordan.png",
+            icon = "costumes_jordan_icon.png"
         }
         -- mini_amogus = {
         --     modifier = "",
