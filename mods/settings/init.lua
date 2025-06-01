@@ -184,6 +184,10 @@ settings = {
         french_toast = {
             modifier = "^costumes_bread.png",
             icon = "costumes_bread_icon.png"
+        },
+        blue_hoodie = {
+            modifier = "^costumes_hoodie.png",
+            icon = "costumes_hoodie_icon.png"
         }
         -- mini_amogus = {
         --     modifier = "",
