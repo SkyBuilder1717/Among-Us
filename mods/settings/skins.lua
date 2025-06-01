@@ -71,7 +71,7 @@ function settings.show_skins_menu(name)
             insert(formspec, y_pos)
             insert(formspec, ";0.75,0.75;")
             insert(formspec, texture)
-            insert(formspec, "^settings_color_chosen.png]")
+            insert(formspec, "^settings_color_pressed.png]")
         else
             insert(formspec, "image_button[")
             insert(formspec, x_pos)
