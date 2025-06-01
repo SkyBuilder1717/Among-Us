@@ -153,11 +153,15 @@ settings = {
             modifier = "^costumes_smoking.png",
             icon = "costumes_smoking_icon.png"
         },
-        mini_amogus = {
-            modifier = "",
-            mesh = "character_hat.glb",
-            icon = "costumes_miniamogus_icon.png"
+        signal_corrupted = {
+            modifier = "^costumes_glitch.png",
+            icon = "costumes_glitch_icon.png"
         }
+        -- mini_amogus = {
+        --     modifier = "",
+        --     mesh = "character_hat.glb",
+        --     icon = "costumes_miniamogus_icon.png"
+        -- }
     },
     players = {},
     roles = {},

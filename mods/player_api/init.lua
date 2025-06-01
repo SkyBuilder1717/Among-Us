@@ -23,6 +23,25 @@ local player_def = {
 player_api.register_model("character.glb", player_def)
 player_api.register_model("character_hat.glb", player_def)
 
+player_api.register_model("character.b3d", {
+	animation_speed = 30,
+	textures = {"character.png"},
+	animations = {
+		-- Standard animations.
+		stand     = {x = 0,   y = 79},
+		lay       = {x = 162, y = 166, eye_height = 0.3, override_local = true,
+			collisionbox = {-0.6, 0.0, -0.6, 0.6, 0.3, 0.6}},
+		walk      = {x = 168, y = 187},
+		mine      = {x = 189, y = 198},
+		walk_mine = {x = 200, y = 219},
+		sit       = {x = 81,  y = 160, eye_height = 0.8, override_local = true,
+			collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.0, 0.3}}
+	},
+	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
+	stepheight = 0.6,
+	eye_height = 1.47,
+})
+
 local function choose_color(name)
 	local colors = settings.available_colors()
 	settings.set_color(name, colors[math.random(1, #colors)])
@@ -43,7 +62,7 @@ core.register_on_joinplayer(function(player)
 	local inv = player:get_inventory()
 	inv:set_list("main", {})
 	inv:set_size("hand", 1)
-	player_api.set_model(player, "character.glb")
+	player_api.set_model(player, "character.b3d")
 	player:set_properties({show_on_minimap = false})
 	local name = player:get_player_name()
 	local color = storage:get("_player_"..name)

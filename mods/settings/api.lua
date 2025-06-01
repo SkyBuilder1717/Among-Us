@@ -23,7 +23,7 @@ core.register_entity("settings:dead_body", {
         pointable = true,
         visual = "mesh",
         visual_size = {x = 1, y = 1, z = 1},
-        mesh = "character.glb",
+        mesh = "character.b3d",
         textures = {"player_api_mask_OLD.png^visor.png"},
         use_texture_alpha = true,
         is_visible = true,
@@ -40,7 +40,11 @@ core.register_entity("settings:dead_body", {
         show_on_minimap = false
     },
     on_activate = function(self)
-        self.object:set_animation({x = 5.4, y = 5.5}, 1, 0, true)
+        if string.find(self.object:get_properties().mesh, "glb") then
+            self.object:set_animation({x = 5.4, y = 5.5}, 1, 0, true)
+        else
+            self.object:set_animation({x = 162, y = 166}, 30, 0, true)
+        end
     end,
     on_step = function(self)
         if not settings.started or (settings.started and settings.meeting_started) then
@@ -91,8 +95,13 @@ function settings.set_color(name, color)
     local meta = player:get_meta()
     local costume = meta:get_string("_costume")
     local def = settings.costumes[(costume == "" and "none" or costume)]
+    if not def then
+        def = settings.costumes["none"]
+        meta:set_string("_costume", "")
+    end
     settings.set_costume(name, costume)
-	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..def.modifier.."^visor.png"})
+    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))^visor.png", def.modifier}
+	player_api.set_textures(player, {table.concat(texture)})
 	local inv = player:get_inventory()
     inv:set_stack("hand", 1, "settings:"..color)
     return true
@@ -104,11 +113,15 @@ function settings.set_costume(name, costume)
     meta:set_string("_costume", costume)
     local colors = settings.colors[settings.players[name]]
     local def = settings.costumes[(costume == "" and "none" or costume)]
-    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))", def.modifier, "^visor.png"}
+    if not def then
+        def = settings.costumes["none"]
+        meta:set_string("_costume", "")
+    end
+    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))^visor.png", def.modifier}
     if def.mesh then
         player_api.set_model(player, def.mesh)
     else
-	    player_api.set_model(player, "character.glb")
+	    player_api.set_model(player, "character.b3d")
     end
 	player_api.set_textures(player, {table.concat(texture)})
 end
