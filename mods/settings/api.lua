@@ -91,6 +91,7 @@ function settings.set_color(name, color)
     local meta = player:get_meta()
     local costume = meta:get_string("_costume")
     local def = settings.costumes[(costume == "" and "none" or costume)]
+    settings.set_costume(name, costume)
 	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..def.modifier.."^visor.png"})
 	local inv = player:get_inventory()
     inv:set_stack("hand", 1, "settings:"..color)
@@ -512,7 +513,7 @@ function settings.kill(name)
             local textures = props.textures
             obj:set_properties({
                 textures = textures,
-                infotext = name
+                infotext = name,
                 mesh = props.mesh
             })
         end
