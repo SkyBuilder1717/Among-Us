@@ -313,6 +313,7 @@ function settings.finish_voting()
         local hex = settings.colors[color][1]
         core.chat_send_all(S("@1 was ejected.", core.colorize(hex, most_voted)))
         local most_player = core.get_player_by_name(most_voted)
+        settings.play_sound("eject")
         if most_player then
             if not settings.roles[most_voted] == "impostor" then
                 settings.roles[most_voted] = "ghost"
@@ -325,7 +326,11 @@ function settings.finish_voting()
             })
         end
     elseif tie then
-        core.chat_send_all(S("No one was ejected. (Tie)"))
+        if max_votes = 0 then
+            core.chat_send_all(S("No one was ejected. (Skipped)"))
+        else
+            core.chat_send_all(S("No one was ejected. (Tie)"))
+        end
         most_voted = nil
     else
         core.chat_send_all(S("No one was ejected."))
@@ -340,11 +345,11 @@ function settings.finish_voting()
         settings.cooldown[name] = nil
     end
     if settings.started and most_voted then
-        if not settings.roles[most_voted] == "impostor" then
+        if settings.roles[most_voted] == "impostor" then
             settings.tell_role(name)
-            core.chat_send_player(most_voted, S("You have been ejected, but you still can complete tasks!"))
-        else
             core.chat_send_player(most_voted, S("You have been ejected, but you still can sabotage!"))
+        else
+            core.chat_send_player(most_voted, S("You have been ejected, but you still can complete tasks!"))
         end
         local most_player = core.get_player_by_name(most_voted)
         local inv = most_player:get_inventory()
