@@ -148,9 +148,7 @@ settings = {
 }
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
-
 util = dofile(modpath.."/util.lua")
-
 local S = core.get_translator(modname)
 
 for color, def in pairs(settings.colors) do

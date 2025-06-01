@@ -1,3 +1,5 @@
+local modname = core.get_current_modname()
+local S = core.get_translator(modname)
 local insert = table.insert
 local FORMNAME = "settings:laptop_skins"
 
