@@ -181,6 +181,7 @@ end
 
 function settings.tell_role(name)
     local role = settings.roles[name]
+    if not role then return end
     local color = "cyan"
     if role == "impostor" then
         color = "red"
