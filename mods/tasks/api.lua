@@ -158,7 +158,7 @@ function tasks.update_hud()
                         index = 1
                         color = 0xFFFFFF
                     end
-                    local ypos = 0.105
+                    local ypos = 0.11
                     if #states > 1 and not task.text_only then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
@@ -227,7 +227,7 @@ function tasks.update_hud()
                     if i == 1 then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",
-                            position = {x=0.075, y=0.05 + (0.025 * i)},
+                            position = {x=0.075, y=ypos + (0.025 * i)},
                             name = task.name,
                             scale = {x = 1, y = 1},
                             text = S("Communications disabled!"),

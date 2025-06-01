@@ -40,6 +40,14 @@ settings = {
             min = 15, 
             max = 45,
             subfix = "second(-s)"
+        },
+        button_delay = {
+            title = "Emergency button delay",
+            type = "int",
+            default = 30,
+            min = 0, 
+            max = 60,
+            subfix = "second(-s)"
         }
     },
     colors = {

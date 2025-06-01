@@ -17,13 +17,13 @@ function settings.show_customization_menu(name)
         local y_pos, size = 1.35 + (i * 0.75), 0.625
         local plus, minus = "^gui_overlay_plus.png", "^gui_overlay_minus.png"
 
-        t(formspec, "label[1.25,")
+        t(formspec, "label[1.15,")
         t(formspec, y_pos)
         t(formspec, ";")
         t(formspec, def.title)
         t(formspec, "]")
 
-        t(formspec, "image_button[4,")
+        t(formspec, "image_button[4.10,")
         t(formspec, y_pos - (size / 1.75))
         t(formspec, ";")
         t(formspec, size)
@@ -37,13 +37,13 @@ function settings.show_customization_menu(name)
         t(formspec, minus)
         t(formspec, "]")
 
-        t(formspec, "label[5.2475,")
+        t(formspec, "label[5.3475,")
         t(formspec, y_pos)
         t(formspec, ";")
         t(formspec, settings.get_setting(name))
         t(formspec, "]")
 
-        t(formspec, "image_button[6,")
+        t(formspec, "image_button[6.10,")
         t(formspec, y_pos - (size / 1.75))
         t(formspec, ";")
         t(formspec, size)
@@ -57,7 +57,7 @@ function settings.show_customization_menu(name)
         t(formspec, plus)
         t(formspec, "]")
 
-        t(formspec, "image_button[1,5;5.75,3;settings_start.png;start;;true;false]")
+        t(formspec, "image_button[1,8.5;5.75,3;settings_start.png;start;;true;false]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
     settings.formspec[name] = nil

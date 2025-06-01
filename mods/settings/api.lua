@@ -359,7 +359,7 @@ function settings.finish_voting()
     settings.check_end_game()
     settings.restore("skeld")
 
-    core.after(30, function()
+    core.after(settings.get_setting("button_delay"), function()
         settings.button_pressed = false
     end)
 end
