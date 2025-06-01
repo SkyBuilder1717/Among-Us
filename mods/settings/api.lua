@@ -508,7 +508,6 @@ core.register_on_chat_message(function(name, message)
     local color = settings.players[name]
     if color then
         local hex = settings.colors[color][1]
-        local role = settings.roles[name]
         local plr = core.get_player_by_name(name)
         if settings.started and (plr:get_properties().visual_size.x < 1) then
             for _, player in pairs(core.get_connected_players()) do
@@ -520,8 +519,9 @@ core.register_on_chat_message(function(name, message)
             end
             return true
         end
+        local role = settings.roles[name]
         if role then
-            if settings.started and not (plr:get_properties().visual_size.x < 1) and (prole == "impostor") and string.match(message, "^!") then
+            if settings.started and not (plr:get_properties().visual_size.x < 1) and (role == "impostor") and string.match(message, "^!") then
                 for _, player in pairs(core.get_connected_players()) do
                     local pname = player:get_player_name()
                     local prole = settings.roles[pname]
