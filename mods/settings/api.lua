@@ -1,14 +1,4 @@
-local BLACKLIST = {
-    "Feros",
-    "Sussy-Baka",
-    "SussyBaka",
-    "Sussybaka",
-    "impostor",
-    "Impostor",
-    "Sussy-baka",
-    "sussy-baka",
-    "superstickman"
-}
+local BLACKLIST = {}
 
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)

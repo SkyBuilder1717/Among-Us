@@ -13,7 +13,6 @@ function settings.show_skins_menu(name)
         "formspec_version[7]",
         "size[8,8]"
     }
-    
     if string.find(props.mesh, "glb") then
         insert(formspec, "model[0,2;4,5;preview;")
         insert(formspec, props.mesh)
@@ -27,7 +26,7 @@ function settings.show_skins_menu(name)
         insert(formspec, core.formspec_escape(table.concat(player_api.get_textures(player), ",")))
         insert(formspec, ";0,180;false;true;0,79;30]")
     end
-
+    
     local i = 0
     local ypos
     insert(formspec, "label[4,1.5;Colors]")
