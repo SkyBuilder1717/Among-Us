@@ -68,7 +68,6 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     local player_name = player:get_player_name()
     if not util.admin(player_name) then return end
     if fields.quit then
-        core.sound_play("selected", {to_player = player_name})
         return
     end
     if fields.start then

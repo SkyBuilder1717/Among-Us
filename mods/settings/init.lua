@@ -52,7 +52,7 @@ settings = {
         orange = {
             "#db6307",
             "#a6570d",
-            "#5c2103",
+            "#84370b",
             "#bd4c0f"
         },
         yellow = {
