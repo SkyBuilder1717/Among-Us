@@ -11,7 +11,7 @@ function settings.show_skins_menu(name)
     local formspec = {
         "formspec_version[7]",
         "size[8,8]",
-        "model[0,2;4,5;preview;character.glb;", core.formspec_escape(table.concat(player_api.get_textures(player), ",")), ";0,180;false;true;0,5.40;5.57]"
+        "model[0,2;4,5;preview;character.glb;", core.formspec_escape(table.concat(player_api.get_textures(player), ",")), ";0,180;false;true;0,2.66;1]"
     }
     local i = 0
     local ypos
