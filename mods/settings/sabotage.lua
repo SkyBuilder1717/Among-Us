@@ -237,7 +237,7 @@ core.register_chatcommand("reactor", {
             settings.current_sabotage = "reactor"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", "Reactor melting! @1 seconds until game over!", settings.get_setting("sabotage_time")))
+            core.chat_send_all(core.colorize("yellow", S("Reactor melting! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end
@@ -251,7 +251,7 @@ core.register_chatcommand("oxygen", {
             settings.current_sabotage = "oxygen"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", "Oxygen leaking! @1 seconds until game over!", settings.get_setting("sabotage_time")))
+            core.chat_send_all(core.colorize("yellow", S("Oxygen leaking! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end
