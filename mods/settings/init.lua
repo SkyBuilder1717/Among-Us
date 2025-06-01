@@ -67,13 +67,13 @@ settings = {
             "#7a5a0f",
             "#bd910f"
         },
-        green = {
+        lime = {
             "#36c612",
             "#0da615",
             "#0c7a14",
             "#15b90f"
         },
-        dark_green = {
+        green = {
             "#207f11",
             "#115e1a",
             "#054909",
