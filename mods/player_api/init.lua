@@ -1,7 +1,6 @@
 dofile(core.get_modpath("player_api") .. "/api.lua")
 
--- Default player appearance
-player_api.register_model("character.glb", {
+local player_def = {
 	animation_speed = 1,
 	textures = {"player_api_mask_OLD.png^visor.png"},
 	animations = {
@@ -18,7 +17,11 @@ player_api.register_model("character.glb", {
 	collisionbox = {-0.3, 0.0, -0.3, 0.3, 1.7, 0.3},
 	stepheight = 1,
 	eye_height = 1.47,
-})
+}
+
+-- Default player appearance
+player_api.register_model("character.glb", player_def)
+player_api.register_model("character_hat.glb", player_def)
 
 local function choose_color(name)
 	local colors = settings.available_colors()

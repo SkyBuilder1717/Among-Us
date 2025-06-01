@@ -152,6 +152,11 @@ settings = {
         tuxedo = {
             modifier = "^costumes_smoking.png",
             icon = "costumes_smoking_icon.png"
+        },
+        mini_amogus = {
+            modifier = "",
+            mesh = "character_hat.glb",
+            icon = "costumes_miniamogus_icon.png"
         }
     },
     players = {},

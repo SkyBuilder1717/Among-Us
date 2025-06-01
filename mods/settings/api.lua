@@ -103,6 +103,11 @@ function settings.set_costume(name, costume)
     meta:set_string("_costume", costume)
     local colors = settings.colors[settings.players[name]]
     local def = settings.costumes[(costume == "" and "none" or costume)]
+    if def.mesh then
+        player_api.set_model(player, def.mesh)
+    else
+	    player_api.set_model(player, "character.glb")
+    end
 	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..def.modifier.."^visor.png"})
 end
 
@@ -502,11 +507,13 @@ function settings.kill(name)
     core.sound_play("kill_crewmate", {to_player = name})
     if player then
         local obj = core.add_entity(player:get_pos(), "settings:dead_body")
+        local props = player:get_properties()
         if obj then
-            local textures = player:get_properties().textures
+            local textures = props.textures
             obj:set_properties({
                 textures = textures,
                 infotext = name
+                mesh = props.mesh
             })
         end
         settings.roles[name] = "ghost"
