@@ -174,8 +174,7 @@ function tasks.update_hud()
                         }))
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "waypoint",
-                            name = task.name,
-                            text = S(states[index].title.." (@1/@2)",
+                            name = S(states[index].title.." (@1/@2)",
                                 task.index,
                                 #states),
                             world_pos = states[index].pos,
@@ -197,8 +196,7 @@ function tasks.update_hud()
                         }))
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "waypoint",
-                            name = task.name,
-                            text = S(states[#states].title.." (@1)",
+                            name = S(states[#states].title.." (@1)",
                                 task.index),
                             world_pos = states[index].pos,
                             z_index = 1,
@@ -240,8 +238,7 @@ function tasks.update_hud()
                         }))
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "waypoint",
-                            name = task.name,
-                            text = S("Communications disabled!"),
+                            name = S("Communications disabled!"),
                             world_pos = {x = 9, y = 2, z = -45},
                             z_index = 1,
                             number = 0xffff00,
