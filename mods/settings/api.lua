@@ -97,9 +97,9 @@ function settings.set_costume(name, costume)
     local player = core.get_player_by_name(name)
     local meta = player:get_meta()
     meta:set_string("_costume", costume)
-	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..costume.modifier.."^visor.png"})
-	settings.set_color(name, settings.players[name])
-    return true
+    local colors = settings.colors[settings.players[name]]
+    local def = settings.costumes[(costume == "" and "none" or costume)]
+	player_api.set_textures(player, {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))"..def.modifier.."^visor.png"})
 end
 
 function settings.set_setting(name, value)

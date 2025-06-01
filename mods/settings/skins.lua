@@ -61,10 +61,10 @@ function settings.show_skins_menu(name)
         i = i + 1
         local x_pos = 4 + ((i - 1) % 4) * 0.85
         local row_number = math.floor((i - 1) / 4)
-        local y_pos = 1.5 + (row_number * 0.85)
+        local y_pos = 5 + (row_number * 0.85)
         local texture = def.icon
         
-        if meta:get_string("_costume") == name then
+        if (meta:get_string("_costume") == "" and name == "none") or (meta:get_string("_costume") == name) then
             insert(formspec, "image[")
             insert(formspec, x_pos)
             insert(formspec, ",")
@@ -80,13 +80,13 @@ function settings.show_skins_menu(name)
             insert(formspec, ";0.75,0.75;")
             insert(formspec, texture)
             insert(formspec, ";")
-            insert(formspec, color)
+            insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
             insert(formspec, "^settings_color_hover.png]tooltip[")
-            insert(formspec, color)
+            insert(formspec, name)
             insert(formspec, ";")
-            insert(formspec, S(util.first(color:gsub("_", " "))))
+            insert(formspec, S(util.first(name:gsub("_", " "))))
             insert(formspec, "]")
         end
     end
@@ -109,7 +109,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
             core.sound_play("selected", {to_player = name})
         end
     end
-    for costume, _ in pairs(settings.costume) do
+    for costume, _ in pairs(settings.costumes) do
         if fields[costume] then
             settings.set_costume(name, costume)
             core.sound_play("selected", {to_player = name})
