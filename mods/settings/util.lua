@@ -59,6 +59,10 @@ function funcs.remove(t, val)
     end
 end
 
+function funcs.starts(text, start)
+    return string.find(text, start, 1, true) == 1
+end
+
 function funcs.admin(name)
     local sname = core.settings:get("name")
     return (name == sname) or core.check_player_privs(name, "server")

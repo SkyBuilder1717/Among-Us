@@ -508,6 +508,7 @@ core.register_on_chat_message(function(name, message)
     local color = settings.players[name]
     if color then
         local hex = settings.colors[color][1]
+        local role = settings.roles[name]
         local plr = core.get_player_by_name(name)
         if settings.started and (plr:get_properties().visual_size.x < 1) then
             for _, player in pairs(core.get_connected_players()) do
@@ -518,6 +519,19 @@ core.register_on_chat_message(function(name, message)
                 end
             end
             return true
+        end
+        if role then
+            if settings.started and not (plr:get_properties().visual_size.x < 1) and (prole == "impostor") and util.starts(message, "!") then
+                for _, player in pairs(core.get_connected_players()) do
+                    local pname = player:get_player_name()
+                    local prole = settings.roles[pname]
+                    if (prole == "impostor") and not (player:get_properties().visual_size.x < 1) then
+                        core.sound_play("new_message", {to_player = pname})
+                        core.chat_send_player(pname, core.colorize("red", S("[IMPOSTOR]")).." "..core.format_chat_message(core.colorize(hex, name), string.sub(message, 2)))
+                    end
+                end
+                return true
+            end
         end
         if settings.started and not settings.meeting_started then
             return true
