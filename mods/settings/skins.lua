@@ -6,6 +6,7 @@ local FORMNAME = "settings:laptop_skins"
 function settings.show_skins_menu(name)
     local player = core.get_player_by_name(name)
     if not player then return end
+    local meta = player:get_meta()
     local colors = settings.colors[settings.players[name]]
     local formspec = {
         "formspec_version[7]",
@@ -54,6 +55,41 @@ function settings.show_skins_menu(name)
             insert(formspec, "]")
         end
     end
+
+    i = 0
+    for name, def in pairs(settings.costumes) do
+        i = i + 1
+        local x_pos = 4 + ((i - 1) % 4) * 0.85
+        local row_number = math.floor((i - 1) / 4)
+        local y_pos = 1.5 + (row_number * 0.85)
+        local texture = def.icon
+        
+        if meta:get_string("_costume") == name then
+            insert(formspec, "image[")
+            insert(formspec, x_pos)
+            insert(formspec, ",")
+            insert(formspec, y_pos)
+            insert(formspec, ";0.75,0.75;")
+            insert(formspec, texture)
+            insert(formspec, "^settings_color_chosen.png]")
+        else
+            insert(formspec, "image_button[")
+            insert(formspec, x_pos)
+            insert(formspec, ",")
+            insert(formspec, y_pos)
+            insert(formspec, ";0.75,0.75;")
+            insert(formspec, texture)
+            insert(formspec, ";")
+            insert(formspec, color)
+            insert(formspec, ";;true;false;")
+            insert(formspec, texture)
+            insert(formspec, "^settings_color_hover.png]tooltip[")
+            insert(formspec, color)
+            insert(formspec, ";")
+            insert(formspec, S(util.first(color:gsub("_", " "))))
+            insert(formspec, "]")
+        end
+    end
     insert(formspec, "image_button[1,0.45;2.75,0.75;gui_buttonbg_pressed.png;skins;Player;true;true;gui_buttonbg_hover.png]")
     if util.admin(name) then
         insert(formspec, "image_button[4.25,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
@@ -70,6 +106,12 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     for color, _ in pairs(settings.colors) do
         if fields[color] and settings.is_color_available(color) then
             settings.set_color(name, color)
+            core.sound_play("selected", {to_player = name})
+        end
+    end
+    for costume, _ in pairs(settings.costume) do
+        if fields[costume] then
+            settings.set_costume(name, costume)
             core.sound_play("selected", {to_player = name})
         end
     end

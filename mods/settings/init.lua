@@ -140,6 +140,20 @@ settings = {
             "#430b0b"
         }
     },
+    costumes = {
+        none = {
+            modifier = "",
+            icon = "settings_color_chosen.png"
+        },
+        bandage = {
+            modifier = "^costumes_bandage.png",
+            icon = "costumes_bandage_icon.png"
+        },
+        tuxedo = {
+            modifier = "^costumes_smoking.png",
+            icon = "costumes_smoking_icon.png"
+        }
+    },
     players = {},
     roles = {},
     hud = {},
