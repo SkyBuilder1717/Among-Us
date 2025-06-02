@@ -114,7 +114,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
                 settings.toggle_costume(name, costume)
                 core.sound_play("selected", {to_player = name})
             else
-                if not settings.toggle_costume(name, costume) and def.dev_only then
+                if not settings.has_costume(name, costume) and def.dev_only then
                     core.sound_play("buy_error", {to_player = name})
                 else
                     local price = def.price
