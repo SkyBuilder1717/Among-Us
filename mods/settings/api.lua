@@ -305,11 +305,12 @@ local function get_impostors()
     for i = 0, engineers do
         if i > 0 then
             local index = math.random(1, #players)
-            local player = players[index]
-            local name = player:get_player_name()
-            settings.roles[name] = "engineer"
-            local inv = player:get_inventory()
+            local plr = players[index]
+            local player_name = plr:get_player_name()
+            settings.roles[player_name] = "engineer"
+            local inv = plr:get_inventory()
             inv:set_list("main", {})
+            table.remove(players, index)
         end
     end
     for _, player in pairs(players) do
