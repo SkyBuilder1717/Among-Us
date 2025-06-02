@@ -221,7 +221,8 @@ end
 
 dofile(modpath.."/api.lua")
 dofile(modpath.."/vents.lua")
-dofile(modpath.."/skins.lua")
+dofile(modpath.."/colors.lua")
+dofile(modpath.."/costumes.lua")
 dofile(modpath.."/customization.lua")
 dofile(modpath.."/button.lua")
 dofile(modpath.."/sabotage.lua")
@@ -235,7 +236,7 @@ core.register_node("settings:laptop", {
 	paramtype2 = "facedir",
     on_rightclick = function(_, _, player)
         local name = player:get_player_name()
-        settings.show_skins_menu(name)
+        settings.show_colors_menu(name)
     end
 })
 

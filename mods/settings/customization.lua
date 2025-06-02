@@ -7,9 +7,7 @@ function settings.show_customization_menu(name)
     if not util.admin(name) then return end
     local formspec = {
         "formspec_version[7]",
-        "size[8,8]",
-        "image_button[1,0.45;2.75,0.75;gui_buttonbg.png;skins;Player;true;false;gui_buttonbg_hover.png]",
-        "image_button[4.25,0.45;2.75,0.75;gui_buttonbg_pressed.png;customization;Game;true;false;gui_buttonbg_hover.png]"
+        "size[12,8]"
     }
     local i = 0
     for name, def in pairs(settings.lobby) do
@@ -23,7 +21,7 @@ function settings.show_customization_menu(name)
         t(formspec, def.title)
         t(formspec, "]")
 
-        t(formspec, "image_button[4.10,")
+        t(formspec, "image_button[8,")
         t(formspec, y_pos - (size / 1.75))
         t(formspec, ";")
         t(formspec, size)
@@ -37,13 +35,13 @@ function settings.show_customization_menu(name)
         t(formspec, minus)
         t(formspec, "]")
 
-        t(formspec, "label[5.3475,")
+        t(formspec, "label[9.2475,")
         t(formspec, y_pos)
         t(formspec, ";")
         t(formspec, settings.get_setting(name))
         t(formspec, "]")
 
-        t(formspec, "image_button[6.10,")
+        t(formspec, "image_button[10,")
         t(formspec, y_pos - (size / 1.75))
         t(formspec, ";")
         t(formspec, size)
@@ -57,8 +55,15 @@ function settings.show_customization_menu(name)
         t(formspec, plus)
         t(formspec, "]")
 
-        t(formspec, "image_button[1,8.5;5.75,3;settings_start.png;start;;true;false]")
+        t(formspec, "image_button[3.5,8.5;5.75,3;settings_start.png;start;;true;false]")
     end
+
+    t(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
+    t(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
+    if util.admin(name) then
+        t(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg_pressed.png;customization;Game;true;true;gui_buttonbg_hover.png]")
+    end
+
     core.show_formspec(name, FORMNAME, table.concat(formspec))
     settings.formspec[name] = nil
 end
@@ -83,8 +88,13 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         core.sound_play("selected", {to_player = player_name})
         return
     end
-    if fields.skins then
-        settings.show_skins_menu(player_name)
+    if fields.colors then
+        settings.show_colors_menu(player_name)
+        core.sound_play("selected", {to_player = player_name})
+        return
+    end
+    if fields.costumes then
+        settings.show_costumes_menu(player_name)
         core.sound_play("selected", {to_player = player_name})
         return
     end
@@ -92,13 +102,14 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         local value = settings.get_setting(name)
         if fields[name.."_minus"] then
             settings.set_setting(name, value - 1)
+            settings.play_sound("setting")
         elseif fields[name.."_plus"] then
             settings.set_setting(name, value + 1)
+            settings.play_sound("setting")
         end
         for _, player in pairs(core.get_connected_players()) do
             update_settings_ui(player)
         end
         settings.show_customization_menu(player_name)
-        settings.play_sound("setting")
     end
 end)
