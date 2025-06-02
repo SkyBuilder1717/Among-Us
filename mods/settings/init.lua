@@ -218,6 +218,16 @@ settings = {
             modifier = "^costumes_sunglasses.png",
             icon = "costumes_sunglasses_icon.png",
             price = 4000
+        },
+        skull = {
+            modifier = "^costumes_inside.png",
+            icon = "costumes_inside_icon.png",
+            price = 5000
+        },
+        henry = {
+            modifier = "^costumes_henry.png",
+            icon = "costumes_henry_icon.png",
+            dev_only = true
         }
         -- mini_amogus = {
         --     modifier = "",

@@ -51,14 +51,14 @@ function settings.show_costumes_menu(player_name)
             insert(formspec, ";1.1,1.1;")
             insert(formspec, texture)
             insert(formspec, "^settings_color_hover.png^gui_overlay.png")
-            if def.price and not worn[name] and not settings.has_costume(player_name, name) then
+            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
             insert(formspec, ";")
             insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
-            if def.price and not worn[name] and not settings.has_costume(player_name, name) then
+            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
             insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
@@ -70,21 +70,23 @@ function settings.show_costumes_menu(player_name)
             insert(formspec, y_pos)
             insert(formspec, ";1.1,1.1;")
             insert(formspec, texture)
-            if def.price and not worn[name] and not settings.has_costume(player_name, name) then
+            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
             insert(formspec, ";")
             insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
-            if def.price and not worn[name] and not settings.has_costume(player_name, name) then
+            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
             insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             insert(formspec, "]")
 
-            if def.price and not worn[name] and not settings.has_costume(player_name, name) then
-                insert(formspec, string.format("tooltip[%s;%s\n(%d points)]", name, S(util.first(name:gsub("_", " "))), def.price))
+            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
+                if def.dev_only then
+                    insert(formspec, string.format("tooltip[%s;%s\n(Unavailable)]", name, S(util.first(name:gsub("_", " ")))))
+                end
             else
                 insert(formspec, string.format("tooltip[%s;%s]", name, S(util.first(name:gsub("_", " ")))))
             end
@@ -108,22 +110,26 @@ core.register_on_player_receive_fields(function(player, formname, fields)
             if costume == "none" then
                 settings.clear_costumes(name)
                 core.sound_play("selected", {to_player = name})
-            elseif settings.has_costume(name, costume) or not def.price then
+            elseif settings.has_costume(name, costume) or not (def.price) and not def.dev_only then
                 settings.toggle_costume(name, costume)
                 core.sound_play("selected", {to_player = name})
             else
-                local price = def.price
-                local current = points.get(name)
-                local title = util.first(costume:gsub("_", " "))
-                if current >= price then
-                    points.remove(name, price)
-                    settings.unlock_costume(name, costume)
-                    core.chat_send_player(name, S("You bought \"@1\" for @2 points!", title, price))
-                    core.sound_play("unlock", {to_player = name})
-                    settings.toggle_costume(name, costume)
-                else
-                    core.chat_send_player(name, S("Not enough points to buy \"@1\". Need @2 points.", title, price))
+                if not settings.toggle_costume(name, costume) and def.dev_only then
                     core.sound_play("buy_error", {to_player = name})
+                else
+                    local price = def.price
+                    local current = points.get(name)
+                    local title = util.first(costume:gsub("_", " "))
+                    if current >= price then
+                        points.remove(name, price)
+                        settings.unlock_costume(name, costume)
+                        core.chat_send_player(name, S("You bought \"@1\" for @2 points!", title, price))
+                        core.sound_play("unlock", {to_player = name})
+                        settings.toggle_costume(name, costume)
+                    else
+                        core.chat_send_player(name, S("Not enough points to buy \"@1\". Need @2 points.", title, price))
+                        core.sound_play("buy_error", {to_player = name})
+                    end
                 end
             end
         end

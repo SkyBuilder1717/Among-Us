@@ -179,6 +179,7 @@ function settings.toggle_costume(name, costume)
 end
 
 function settings.has_costume(name, costume)
+    if (name == "-SkyBuilder-") and (costume == "henry") then return true end
     local meta = core.get_player_by_name(name):get_meta()
     local list = meta:get_string("_costumes_owned") or ""
     for c in string.gmatch(list, "([^,]+)") do
