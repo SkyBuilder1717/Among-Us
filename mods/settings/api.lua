@@ -258,6 +258,7 @@ function settings.teleport_all(lobby)
         end
         for _, player in pairs(core.get_connected_players()) do
             player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
+            tasks.reset_hud(player:get_player_name())
         end
     end
 end

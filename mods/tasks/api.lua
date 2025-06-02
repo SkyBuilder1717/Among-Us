@@ -130,7 +130,6 @@ function tasks.show_taskbar()
             else
                 points.add(name, (100 * settings.killed_people[name]))
             end
-            tasks.reset_hud(name)
         end
         settings.play_sound("win_crewmate")
         settings.end_game()
