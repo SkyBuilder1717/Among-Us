@@ -48,6 +48,22 @@ settings = {
             min = 0, 
             max = 60,
             subfix = "second(-s)"
+        },
+        discuss_time = {
+            title = "Discuss time",
+            type = "int",
+            default = 30,
+            min = 5, 
+            max = 120,
+            subfix = "second(-s)"
+        },
+        vote_time = {
+            title = "Voting time",
+            type = "int",
+            default = 45,
+            min = 10, 
+            max = 120,
+            subfix = "second(-s)"
         }
     },
     colors = {

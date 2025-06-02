@@ -475,7 +475,7 @@ function settings.end_game()
 end
 
 function settings.start_timer()
-    settings.meeting.time = 30
+    settings.meeting.time = settings.get_setting("discuss_time")
     for i = 1, settings.meeting.time do
         core.after(i, function()
             settings.meeting.time = settings.meeting.time - 1
@@ -485,7 +485,7 @@ function settings.start_timer()
 end
 
 function settings.start_timer_two()
-    settings.meeting.time = 46
+    settings.meeting.time = settings.get_setting("vote_time") + 1
     for i = 1, settings.meeting.time do
         core.after(i, function()
             settings.meeting.time = settings.meeting.time - 1
