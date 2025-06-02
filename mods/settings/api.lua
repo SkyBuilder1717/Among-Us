@@ -16,7 +16,7 @@ core.register_entity("settings:dead_body", {
         pointable = true,
         visual = "mesh",
         visual_size = {x = 1, y = 1, z = 1},
-        mesh = "character.b3d",
+        mesh = "character.glb",
         textures = {"player_api_mask_OLD.png^visor.png"},
         use_texture_alpha = true,
         is_visible = true,
@@ -153,7 +153,7 @@ function settings.apply_costumes(name)
             table.insert(texture, def.modifier)
         end
     end
-    player_api.set_model(player, "character.b3d")
+    player_api.set_model(player, "character.glb")
     player_api.set_textures(player, {table.concat(texture)})
 end
 

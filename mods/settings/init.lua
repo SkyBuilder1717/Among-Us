@@ -233,12 +233,12 @@ settings = {
             modifier = "^costumes_rickroll.png",
             icon = "costumes_rickroll_icon.png",
             price = 3000
+        },
+        mini_amogus = {
+            modifier = "",
+            mesh = "character_hat.glb",
+            icon = "costumes_miniamogus_icon.png"
         }
-        -- mini_amogus = {
-        --     modifier = "",
-        --     mesh = "character_hat.glb",
-        --     icon = "costumes_miniamogus_icon.png"
-        -- }
     },
     killed_people = {},
     players = {},
@@ -414,7 +414,8 @@ core.register_tool("settings:knife", {
                 settings.cooldown[player_name] = true
                 core.after(settings.get_setting("kill_cooldown"), function()
                     settings.cooldown[player_name] = nil
-                    if settings.started and not settings.meeting_started then
+                    local plr = core.get_player_by_name(player_name)
+                    if settings.started and not settings.meeting_started and plr and not (plr:get_properties().visual_size.x < 1) and (settings.roles[player_name] == "impostor") then
                         core.chat_send_player(player_name, S("You can kill again."))
                     end
                 end)
@@ -423,3 +424,12 @@ core.register_tool("settings:knife", {
     end,
     on_drop = function(itemstack, dropper, pos) return itemstack end
 })
+
+core.register_globalstep(function(dtime)
+    for _, player in pairs(core.get_connected_players()) do
+        local name = victim:get_player_name()
+        if not core.get_player_information(name).protocol_version >= core.protocol_versions["5.11.0"] then
+            core.kick_player(name, "Update to version 5.11 or newer!")
+        end
+    end
+end)
