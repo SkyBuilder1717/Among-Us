@@ -64,6 +64,13 @@ settings = {
             min = 10, 
             max = 120,
             subfix = "second(-s)"
+        },
+        engineers = {
+            title = "Engineers",
+            type = "int",
+            default = 1,
+            min = 0, 
+            max = 3
         }
     },
     colors = {

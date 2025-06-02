@@ -142,7 +142,7 @@ function settings.sabotage()
                     core.chat_send_all(S("No oxygen!").." "..core.colorize("red", S("Impostors win!")))
                 end
                 for name, role in pairs(settings.roles) do
-                    if role == "crewmate" or role == "ghost" then
+                    if (role == "crewmate") or (role == "ghost") or (role == "engineer") then
                         points.add(name, math.floor(tasks.completed_tasks[name] / 2))
                     else
                         points.add(name, 1000 + (100 * settings.killed_people[name]) + tasks.completed_tasks[name])

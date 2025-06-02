@@ -275,6 +275,8 @@ function settings.tell_role(name)
         color = "red"
     elseif role == "ghost" then
         color = "#959a9e"
+    elseif role == "engineer" then
+        color = "#21cfbd"
     end
     core.chat_send_player(name, S("Your role is: @1.", core.colorize(color, S(util.first(role)))))
     return role
@@ -298,6 +300,14 @@ local function get_impostors()
             table.remove(players, index)
             settings.killed_people[player_name] = 0
         end
+    end
+    local engineers = settings.get_setting("engineers")
+    players = table.copy(core.get_connected_players())
+    for i = 1, engineers do
+        local name = player:get_player_name()
+        settings.roles[name] = "engineer"
+        local inv = player:get_inventory()
+        inv:set_list("main", {})
     end
     for _, player in pairs(players) do
         local name = player:get_player_name()
@@ -332,6 +342,8 @@ function settings.start_game()
         if role == "impostor" then
             core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!@nUse /teammates to check your remain teammates!"))
             core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
+        elseif role == "engineer" then
+            core.chat_send_player(name, S("Move in the vents and complete tasks!"))
         else
             core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
         end
@@ -461,7 +473,7 @@ function settings.check_end_game()
         local player = core.get_player_by_name(name)
         if role == "impostor" and not (player:get_properties().visual_size.x < 1) then
             impostors = impostors + 1
-        elseif role == "crewmate" and not (player:get_properties().visual_size.x < 1) then
+        elseif ((role == "crewmate") or (role == "engineer")) and not (player:get_properties().visual_size.x < 1) then
             crewmates = crewmates + 1
         end
     end
@@ -567,13 +579,13 @@ function settings.emergency_meeting(name, dead)
     local hex = settings.colors[color][1]
     if not dead then
         core.chat_send_all(S("@1 called emergency meeting!", core.colorize(hex, name)))
-        if settings.roles[name] == "crewmate" then
+        if (settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 25
         end
         settings.play_sound("emergency_meeting")
     else
         core.chat_send_all(S("@1 reported dead body!", core.colorize(hex, name)))
-        if settings.roles[name] == "crewmate" then
+        if (settings.roles[name] == "crewmate") or (settings.roles[name] == "crewmate") then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
         end
         settings.play_sound("dead_body_reported")
