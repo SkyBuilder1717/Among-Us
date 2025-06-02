@@ -58,10 +58,10 @@ function settings.show_costumes_menu(player_name)
             insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
-            insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             if def.price and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
+            insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             insert(formspec, "]")
         else
             insert(formspec, "image_button[")
@@ -77,10 +77,10 @@ function settings.show_costumes_menu(player_name)
             insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
-            insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             if def.price and not worn[name] and not settings.has_costume(player_name, name) then
                 insert(formspec, "^costumes_locked.png")
             end
+            insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             insert(formspec, "]")
 
             if def.price and not worn[name] and not settings.has_costume(player_name, name) then
