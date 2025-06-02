@@ -127,6 +127,8 @@ function tasks.show_taskbar()
         for name, role in pairs(settings.roles) do
             if role == "crewmate" or role == "ghost" then
                 points.add(name, 750 + tasks.completed_tasks[name])
+            else
+                points.add(name, (100 * settings.killed_people))
             end
         end
         settings.play_sound("win_crewmate")

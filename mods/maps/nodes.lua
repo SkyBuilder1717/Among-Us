@@ -381,8 +381,10 @@ core.register_node("maps:numpad", {
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
 		end
+		local name = player:get_player_name()
 		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Oxygen leaking fixed!"))
 			core.after(30, function()
 				settings.current_sabotage = nil
@@ -403,9 +405,11 @@ core.register_node("maps:electro_timing", {
 	},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
+		local name = player:get_player_name()
 		if (pos.x == -19 and pos.y == 2 and pos.z == -32) and settings.active_sabotage and settings.current_sabotage == "light" and not (player:get_properties().visual_size.x < 1) then
 			core.set_timeofday(0.5)
 			settings.active_sabotage = false
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
 			for name, id in pairs(settings.black_screen) do
 				local player = core.get_player_by_name(name)
@@ -573,8 +577,10 @@ core.register_node("maps:reactor_hand", {
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
 		end
+		local name = player:get_player_name()
 		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Reactor melting fixed!"))
 			core.after(30, function()
 				settings.current_sabotage = nil
@@ -650,6 +656,7 @@ core.register_node("maps:communication", {
 		local name = player:get_player_name()
 		if settings.active_sabotage and settings.current_sabotage == "communication" and not (player:get_properties().visual_size.x < 1) then
 			settings.active_sabotage = false
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
 			core.chat_send_all(core.colorize("lime", "Communications fixed!"))
 			tasks.update_hud()
 			core.after(30, function()

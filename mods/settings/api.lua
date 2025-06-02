@@ -467,6 +467,8 @@ function settings.check_end_game()
         for name, role in pairs(settings.roles) do
             if role == "crewmate" or role == "ghost" then
                 points.add(name, 250 + tasks.completed_tasks[name])
+            else
+                points.add(name, (100 * settings.killed_people))
             end
         end
         settings.play_sound("win_crewmate")
@@ -477,7 +479,7 @@ function settings.check_end_game()
             if role == "crewmate" or role == "ghost" then
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
             else
-                points.add(name, 500 + (100 * settings.killed_people))
+                points.add(name, 500 + (100 * settings.killed_people) + tasks.completed_tasks[name])
             end
         end
         settings.play_sound("win_impostor")
@@ -559,9 +561,15 @@ function settings.emergency_meeting(name, dead)
     local hex = settings.colors[color][1]
     if not dead then
         core.chat_send_all(S("@1 called emergency meeting!", core.colorize(hex, name)))
+        if not (settings.role[name] == "impostor") then
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 25
+        end
         settings.play_sound("emergency_meeting")
     else
         core.chat_send_all(S("@1 reported dead body!", core.colorize(hex, name)))
+        if not (settings.role[name] == "impostor") then
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
+        end
         settings.play_sound("dead_body_reported")
     end
     core.chat_send_all("---")

@@ -107,8 +107,10 @@ core.register_on_player_receive_fields(function(player, formname, fields)
             local def = settings.costumes[costume]
             if costume == "none" then
                 settings.clear_costumes(name)
+                core.sound_play("selected", {to_player = name})
             elseif settings.has_costume(name, costume) or not def.price then
                 settings.toggle_costume(name, costume)
+                core.sound_play("selected", {to_player = name})
             else
                 local price = def.price
                 local current = points.get(name)

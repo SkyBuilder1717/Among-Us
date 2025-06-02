@@ -172,22 +172,22 @@ settings = {
         bandage = {
             modifier = "^costumes_bandage.png",
             icon = "costumes_bandage_icon.png",
-            price = 500
+            price = 1000
         },
         tuxedo = {
             modifier = "^costumes_smoking.png",
             icon = "costumes_smoking_icon.png",
-            price = 1500
+            price = 2000
         },
         no_signal = {
             modifier = "^costumes_glitch.png",
             icon = "costumes_glitch_icon.png",
-            price = 750
+            price = 1000
         },
         headphones = {
             modifier = "^costumes_headphones.png",
             icon = "costumes_headphones_icon.png",
-            price = 1000
+            price = 1250
         },
         baby_boy = {
             modifier = "^costumes_baby.png",
@@ -202,22 +202,22 @@ settings = {
         impostor = {
             modifier = "^costumes_red_eye.png",
             icon = "costumes_red_eye_icon.png",
-            price = 100
+            price = 500
         },
         french_toast = {
             modifier = "^costumes_bread.png",
             icon = "costumes_bread_icon.png",
-            price = 8000
+            price = 10000
         },
         grey_hoodie = {
             modifier = "^costumes_hoodie.png",
             icon = "costumes_hoodie_icon.png",
-            price = 3000
+            price = 6000
         },
         sunglasses = {
             modifier = "^costumes_sunglasses.png",
             icon = "costumes_sunglasses_icon.png",
-            price = 5000
+            price = 4000
         }
         -- mini_amogus = {
         --     modifier = "",

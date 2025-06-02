@@ -145,7 +145,7 @@ function settings.sabotage()
                     if role == "crewmate" or role == "ghost" then
                         points.add(name, math.floor(tasks.completed_tasks[name] / 2))
                     else
-                        points.add(name, 1000 + (100 * settings.killed_people))
+                        points.add(name, 1000 + (100 * settings.killed_people) + tasks.completed_tasks[name])
                     end
                 end
                 settings.current_sabotage = nil
@@ -232,6 +232,7 @@ core.register_chatcommand("lightning", {
                     })
                 end
             end
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(core.colorize("yellow", "Light malfunction!"))
         end
     end
@@ -246,6 +247,7 @@ core.register_chatcommand("reactor", {
             settings.active_sabotage = true
             settings.reactor_hands = 0
             core.chat_send_all(core.colorize("yellow", S("Reactor melting! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end
@@ -260,6 +262,7 @@ core.register_chatcommand("oxygen", {
             settings.active_sabotage = true
             settings.reactor_hands = 0
             core.chat_send_all(core.colorize("yellow", S("Oxygen leaking! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
     end
@@ -272,6 +275,7 @@ core.register_chatcommand("communication", {
             settings.current_sabotage = "communication"
             settings.active_sabotage = true
             core.chat_send_all(core.colorize("yellow", "Communications disabled!"))
+            tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             tasks.update_hud()
         end
     end
