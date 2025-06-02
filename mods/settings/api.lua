@@ -302,13 +302,15 @@ local function get_impostors()
         end
     end
     local engineers = settings.get_setting("engineers")
-    for i = 1, engineers do
-        local index = math.random(1, #players)
-        local player = players[index]
-        local name = player:get_player_name()
-        settings.roles[name] = "engineer"
-        local inv = player:get_inventory()
-        inv:set_list("main", {})
+    for i = 0, engineers do
+        if i > 0 then
+            local index = math.random(1, #players)
+            local player = players[index]
+            local name = player:get_player_name()
+            settings.roles[name] = "engineer"
+            local inv = player:get_inventory()
+            inv:set_list("main", {})
+        end
     end
     for _, player in pairs(players) do
         local name = player:get_player_name()
@@ -441,7 +443,9 @@ function settings.finish_voting()
     core.chat_send_all("---")
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        player:hud_remove(settings.meeting.hud[name])
+        if settings.meeting.hud[name] then
+            player:hud_remove(settings.meeting.hud[name])
+        end
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
