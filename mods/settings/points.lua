@@ -1,3 +1,6 @@
+local modname = core.get_current_modname()
+local S = core.get_translator(modname)
+
 points = {
     players = {}
 }

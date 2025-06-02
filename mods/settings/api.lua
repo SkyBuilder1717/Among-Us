@@ -41,7 +41,7 @@ core.register_entity("settings:dead_body", {
         end
     end,
     on_step = function(self)
-        if not settings.started or (settings.started and settings.meeting_started) then
+        if (not settings.started) or (settings.started and settings.meeting_started) then
             self.object:remove()
         end
     end,
@@ -466,7 +466,7 @@ function settings.check_end_game()
     if impostors == 0 then
         core.chat_send_all(core.colorize("cyan", S("Crewmates win!")))
         for name, role in pairs(settings.roles) do
-            if role == "crewmate" or role == "ghost" then
+            if not (role == "impostor") then
                 points.add(name, 250 + tasks.completed_tasks[name])
             else
                 points.add(name, (100 * settings.killed_people))
@@ -477,7 +477,7 @@ function settings.check_end_game()
     elseif impostors >= crewmates then
         core.chat_send_all(core.colorize("red", S("Impostors win!")))
         for name, role in pairs(settings.roles) do
-            if role == "crewmate" or role == "ghost" then
+            if not (role == "impostor") then
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
             else
                 points.add(name, 500 + (100 * settings.killed_people) + tasks.completed_tasks[name])
