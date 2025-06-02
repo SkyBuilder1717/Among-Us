@@ -47,6 +47,7 @@ function settings.show_costumes_menu(name)
             insert(formspec, y_pos)
             insert(formspec, ";1.1,1.1;")
             insert(formspec, texture)
+            insert(formspec, "^settings_color_hover.png^gui_overlay.png")
             insert(formspec, ";")
             insert(formspec, name)
             insert(formspec, ";;true;false;")
@@ -67,7 +68,7 @@ function settings.show_costumes_menu(name)
             insert(formspec, name)
             insert(formspec, ";;true;false;")
             insert(formspec, texture)
-            insert(formspec, "^settings_color_hover.png^gui_overlay.png]tooltip[")
+            insert(formspec, "^settings_color_pressed.png^gui_overlay.png]tooltip[")
             insert(formspec, name)
             insert(formspec, ";")
             insert(formspec, S(util.first(name:gsub("_", " "))))
@@ -80,7 +81,7 @@ function settings.show_costumes_menu(name)
         insert(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
-    settings.formspec[name] = true
+    settings.formspec[name] = nil
 end
 
 core.register_on_player_receive_fields(function(player, formname, fields)
@@ -112,10 +113,5 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     if fields.quit then
         settings.formspec[name] = nil
         return
-    end
-    for player_name, value in pairs(settings.formspec) do
-        if value then
-            settings.show_costumes_menu(player_name)
-        end
     end
 end)
