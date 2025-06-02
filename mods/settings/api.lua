@@ -153,7 +153,12 @@ function settings.apply_costumes(name)
             table.insert(texture, def.modifier)
         end
     end
-    player_api.set_model(player, "character.glb")
+    
+    if def.mesh then
+        player_api.set_model(player, def.mesh)
+    else
+        player_api.set_model(player, "character.glb")
+    end
     player_api.set_textures(player, {table.concat(texture)})
 end
 
