@@ -237,7 +237,8 @@ settings = {
         mini_amogus = {
             modifier = "",
             mesh = "character_hat.glb",
-            icon = "costumes_miniamogus_icon.png"
+            icon = "costumes_miniamogus_icon.png",
+            price = 15000
         }
     },
     killed_people = {},
