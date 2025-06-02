@@ -66,7 +66,7 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
                     if task.index < #task.states then
                         core.sound_play("multitask", {to_player = name})
                         tasks.completed_tasks[name] = tasks.completed_tasks[name] + 25
-                    elses
+                    else
                         core.sound_play("task_completed", {to_player = name})
                         tasks.completed_tasks[name] = tasks.completed_tasks[name] + 50
                     end
