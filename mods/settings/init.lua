@@ -428,7 +428,8 @@ core.register_tool("settings:knife", {
 core.register_globalstep(function(dtime)
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        if not core.get_player_information(name).protocol_version >= core.protocol_versions["5.11.0"] then
+        local ver = core.get_player_information(name).version_string
+        if not ((ver == "5.11.0") or (ver == "5.12.0")) then
             core.kick_player(name, "Update to version 5.11 or newer!")
         end
     end
