@@ -114,4 +114,5 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         settings.formspec[name] = nil
         return
     end
+    settings.show_costumes_menu(name)
 end)
