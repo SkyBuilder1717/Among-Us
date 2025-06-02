@@ -82,14 +82,14 @@ function settings.show_costumes_menu(player_name)
             end
             insert(formspec, "^settings_color_pressed.png^gui_overlay.png")
             insert(formspec, "]")
-
-            if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
-                if def.dev_only then
-                    insert(formspec, string.format("tooltip[%s;%s\n(Unavailable)]", name, S(util.first(name:gsub("_", " ")))))
-                end
-            else
-                insert(formspec, string.format("tooltip[%s;%s]", name, S(util.first(name:gsub("_", " ")))))
+        end
+        
+        if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
+            if def.dev_only then
+                insert(formspec, string.format("tooltip[%s;%s\n(Unavailable)]", name, S(util.first(name:gsub("_", " ")))))
             end
+        else
+            insert(formspec, string.format("tooltip[%s;%s]", name, S(util.first(name:gsub("_", " ")))))
         end
     end
     insert(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
