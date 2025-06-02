@@ -228,6 +228,11 @@ settings = {
             modifier = "^costumes_henry.png",
             icon = "costumes_henry_icon.png",
             dev_only = true
+        },
+        astley = {
+            modifier = "^costumes_rickroll.png",
+            icon = "costumes_rickroll_icon.png",
+            price = 3000
         }
         -- mini_amogus = {
         --     modifier = "",
