@@ -128,7 +128,7 @@ function tasks.show_taskbar()
             if role == "crewmate" or role == "ghost" then
                 points.add(name, 750 + tasks.completed_tasks[name])
             else
-                points.add(name, (100 * settings.killed_people))
+                points.add(name, (100 * settings.killed_people[name]))
             end
         end
         settings.play_sound("win_crewmate")
@@ -158,6 +158,7 @@ function tasks.update_hud()
                 local index = task.index + 1
                 local states = table.copy(task.states)
                 local color
+                local ypos = 0.11
                 if not (settings.active_sabotage and settings.current_sabotage == "communication") then
                     if task.index > #states then
                         color = 0xFFFF00
@@ -173,7 +174,6 @@ function tasks.update_hud()
                         index = 1
                         color = 0xFFFFFF
                     end
-                    local ypos = 0.11
                     if #states > 1 and not task.text_only then
                         table.insert(tasks.hud[name], player:hud_add({
                             type = "text",

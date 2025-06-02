@@ -145,7 +145,7 @@ function settings.sabotage()
                     if role == "crewmate" or role == "ghost" then
                         points.add(name, math.floor(tasks.completed_tasks[name] / 2))
                     else
-                        points.add(name, 1000 + (100 * settings.killed_people) + tasks.completed_tasks[name])
+                        points.add(name, 1000 + (100 * settings.killed_people[name]) + tasks.completed_tasks[name])
                     end
                 end
                 settings.current_sabotage = nil

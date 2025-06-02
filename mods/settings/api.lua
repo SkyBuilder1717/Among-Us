@@ -469,7 +469,7 @@ function settings.check_end_game()
             if not (role == "impostor") then
                 points.add(name, 250 + tasks.completed_tasks[name])
             else
-                points.add(name, (100 * settings.killed_people))
+                points.add(name, (100 * settings.killed_people[name]))
             end
         end
         settings.play_sound("win_crewmate")
@@ -480,7 +480,7 @@ function settings.check_end_game()
             if not (role == "impostor") then
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
             else
-                points.add(name, 500 + (100 * settings.killed_people) + tasks.completed_tasks[name])
+                points.add(name, 500 + (100 * settings.killed_people[name]) + tasks.completed_tasks[name])
             end
         end
         settings.play_sound("win_impostor")
