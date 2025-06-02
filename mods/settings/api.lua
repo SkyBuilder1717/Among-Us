@@ -302,8 +302,9 @@ local function get_impostors()
         end
     end
     local engineers = settings.get_setting("engineers")
-    players = table.copy(core.get_connected_players())
     for i = 1, engineers do
+        local index = math.random(1, #players)
+        local player = players[index]
         local name = player:get_player_name()
         settings.roles[name] = "engineer"
         local inv = player:get_inventory()
