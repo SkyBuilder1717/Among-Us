@@ -171,43 +171,53 @@ settings = {
         },
         bandage = {
             modifier = "^costumes_bandage.png",
-            icon = "costumes_bandage_icon.png"
+            icon = "costumes_bandage_icon.png",
+            price = 500
         },
         tuxedo = {
             modifier = "^costumes_smoking.png",
-            icon = "costumes_smoking_icon.png"
+            icon = "costumes_smoking_icon.png",
+            price = 1500
         },
         no_signal = {
             modifier = "^costumes_glitch.png",
-            icon = "costumes_glitch_icon.png"
+            icon = "costumes_glitch_icon.png",
+            price = 750
         },
         headphones = {
             modifier = "^costumes_headphones.png",
-            icon = "costumes_headphones_icon.png"
+            icon = "costumes_headphones_icon.png",
+            price = 1000
         },
         baby_boy = {
             modifier = "^costumes_baby.png",
-            icon = "costumes_baby_icon.png"
+            icon = "costumes_baby_icon.png",
+            price = 2500
         },
         jordan = {
             modifier = "^costumes_jordan.png",
-            icon = "costumes_jordan_icon.png"
+            icon = "costumes_jordan_icon.png",
+            price = 1750
         },
         impostor = {
             modifier = "^costumes_red_eye.png",
-            icon = "costumes_red_eye_icon.png"
+            icon = "costumes_red_eye_icon.png",
+            price = 100
         },
         french_toast = {
             modifier = "^costumes_bread.png",
-            icon = "costumes_bread_icon.png"
+            icon = "costumes_bread_icon.png",
+            price = 8000
         },
         grey_hoodie = {
             modifier = "^costumes_hoodie.png",
-            icon = "costumes_hoodie_icon.png"
+            icon = "costumes_hoodie_icon.png",
+            price = 3000
         },
         sunglasses = {
             modifier = "^costumes_sunglasses.png",
-            icon = "costumes_sunglasses_icon.png"
+            icon = "costumes_sunglasses_icon.png",
+            price = 5000
         }
         -- mini_amogus = {
         --     modifier = "",
@@ -235,6 +245,7 @@ for color, def in pairs(settings.colors) do
     })
 end
 
+dofile(modpath.."/points.lua")
 dofile(modpath.."/api.lua")
 dofile(modpath.."/vents.lua")
 dofile(modpath.."/colors.lua")
@@ -382,6 +393,7 @@ core.register_tool("settings:knife", {
                 if settings.roles[vname] == "impostor" then return end
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
+                settings.killed_people[player_name] = settings.killed_people[player_name] + 1
                 settings.cooldown[player_name] = true
                 core.after(settings.get_setting("kill_cooldown"), function()
                     settings.cooldown[player_name] = nil

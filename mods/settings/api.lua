@@ -1,4 +1,5 @@
 local BLACKLIST = {}
+settings.killed_people = {}
 
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
@@ -88,8 +89,21 @@ function settings.set_color(name, color)
     player:set_properties({
         nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255}
     })
+
     local meta = player:get_meta()
+    local costume_string = meta:get_string("_costumes") or ""
+    local valid_costumes = {}
+
+    for costume in string.gmatch(costume_string, "([^,]+)") do
+        local def = settings.costumes[costume]
+        if not def or not def.price or settings.has_costume(name, costume) then
+            table.insert(valid_costumes, costume)
+        end
+    end
+
+    meta:set_string("_costumes", table.concat(valid_costumes, ","))
     settings.apply_costumes(name)
+
     local inv = player:get_inventory()
     inv:set_stack("hand", 1, "settings:"..color)
     return true
@@ -162,6 +176,31 @@ function settings.toggle_costume(name, costume)
     end
     meta:set_string("_costumes", table.concat(result, ","))
     settings.apply_costumes(name)
+end
+
+function settings.has_costume(name, costume)
+    local meta = core.get_player_by_name(name):get_meta()
+    local list = meta:get_string("_costumes_owned") or ""
+    for c in string.gmatch(list, "([^,]+)") do
+        if c == costume then return true end
+    end
+    return false
+end
+
+function settings.unlock_costume(name, costume)
+    local player = core.get_player_by_name(name)
+    local meta = player:get_meta()
+    local list = meta:get_string("_costumes_owned") or ""
+    local result = {}
+    local found = false
+    for c in string.gmatch(list, "([^,]+)") do
+        if c == costume then found = true end
+        table.insert(result, c)
+    end
+    if not found then
+        table.insert(result, costume)
+    end
+    meta:set_string("_costumes_owned", table.concat(result, ","))
 end
 
 function settings.set_setting(name, value)
@@ -253,6 +292,7 @@ local function get_impostors()
             local inv = plr:get_inventory()
             inv:set_stack("main", 1, "settings:knife")
             table.remove(players, index)
+            settings.killed_people[player_name] = 0
         end
     end
     for _, player in pairs(players) do
@@ -424,10 +464,22 @@ function settings.check_end_game()
 
     if impostors == 0 then
         core.chat_send_all(core.colorize("cyan", S("Crewmates win!")))
+        for name, role in pairs(settings.roles) do
+            if role == "crewmate" or role == "ghost" then
+                points.add(name, 250 + tasks.completed_tasks[name])
+            end
+        end
         settings.play_sound("win_crewmate")
         settings.end_game()
     elseif impostors >= crewmates then
         core.chat_send_all(core.colorize("red", S("Impostors win!")))
+        for name, role in pairs(settings.roles) do
+            if role == "crewmate" or role == "ghost" then
+                points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
+            else
+                points.add(name, 500 + (100 * settings.killed_people))
+            end
+        end
         settings.play_sound("win_impostor")
         settings.end_game()
     end
@@ -472,6 +524,8 @@ function settings.end_game()
     settings.teleport_all(true)
     settings.restore("skeld")
     settings.ship()
+    tasks.completed_tasks = {}
+    settings.killed_people = {}
 end
 
 function settings.start_timer()

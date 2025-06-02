@@ -141,6 +141,13 @@ function settings.sabotage()
                 elseif settings.current_sabotage == "oxygen" then
                     core.chat_send_all(S("No oxygen!").." "..core.colorize("red", S("Impostors win!")))
                 end
+                for name, role in pairs(settings.roles) do
+                    if role == "crewmate" or role == "ghost" then
+                        points.add(name, math.floor(tasks.completed_tasks[name] / 2))
+                    else
+                        points.add(name, 1000 + (100 * settings.killed_people))
+                    end
+                end
                 settings.current_sabotage = nil
                 settings.active_sabotage = false
                 settings.play_sound("win_impostor")

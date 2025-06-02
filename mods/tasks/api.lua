@@ -1,3 +1,5 @@
+tasks.completed_tasks = {}
+
 local function shallow(og)
 	local c = {}
 	for k, v in pairs(og) do
@@ -58,12 +60,15 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
                     task.index = 60
                     tasks.inspect_sample(name)
                     core.sound_play("multitask", {to_player = name})
+                    tasks.completed_tasks[name] = tasks.completed_tasks[name] + 10
                 else
                     task.index = task.index + 1
                     if task.index < #task.states then
                         core.sound_play("multitask", {to_player = name})
-                    else
+                        tasks.completed_tasks[name] = tasks.completed_tasks[name] + 25
+                    elses
                         core.sound_play("task_completed", {to_player = name})
+                        tasks.completed_tasks[name] = tasks.completed_tasks[name] + 50
                     end
                 end
                 tasks.update_hud()
@@ -119,6 +124,11 @@ function tasks.show_taskbar()
 
     if percentage == 1 then
         core.chat_send_all(S("Tasks completed!").." "..core.colorize("cyan", S("Crewmates win!")))
+        for name, role in pairs(settings.roles) do
+            if role == "crewmate" or role == "ghost" then
+                points.add(name, 750 + tasks.completed_tasks[name])
+            end
+        end
         settings.play_sound("win_crewmate")
         settings.end_game()
     end
@@ -136,6 +146,9 @@ end
 
 function tasks.update_hud()
     for name, new_tasks in pairs(tasks.players) do
+        if not tasks.completed_tasks[name] then
+            tasks.completed_tasks[name] = 0
+        end
         local player = core.get_player_by_name(name)
         tasks.reset_hud(name)
         if not (settings.roles[name] == "impostor") then
@@ -283,6 +296,7 @@ core.register_on_leaveplayer(function(player)
     local name = player:get_player_name()
     tasks.players[name] = nil
     tasks.hud[name] = nil
+    tasks.completed_tasks[name] = nil
     if settings.started then
         tasks.update_hud()
     end

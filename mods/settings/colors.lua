@@ -31,7 +31,7 @@ function settings.show_colors_menu(name)
         i = i + 1
         local x_pos = 5 + ((i - 1) % 5) * 1.25
         local row_number = math.floor((i - 1) / 5)
-        local y_pos = 1.5 + (row_number * 1.25)
+        local y_pos = 1.75 + (row_number * 1.25)
         local texture = "settings_color.png^[colorize:"..hex[1]..":255"
         if settings.is_color_available(color) then
             insert(formspec, "image_button[")
