@@ -568,7 +568,7 @@ function settings.emergency_meeting(name, dead)
         settings.play_sound("emergency_meeting")
     else
         core.chat_send_all(S("@1 reported dead body!", core.colorize(hex, name)))
-        if settings.rolse[name] == "crewmate" then
+        if settings.roles[name] == "crewmate" then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
         end
         settings.play_sound("dead_body_reported")
