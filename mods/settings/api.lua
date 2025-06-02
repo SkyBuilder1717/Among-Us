@@ -1,5 +1,4 @@
 local BLACKLIST = {}
-settings.killed_people = {}
 
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
@@ -504,14 +503,16 @@ function settings.end_game()
             player:hud_remove(meeting_hud)
         end
         local color = settings.players[name]
-        local rgb = util.hex(settings.colors[color][1])
-        player:set_properties({
-            visual_size = {x = 1, y = 1, z = 1},
-            nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255},
-            is_visible = true,
-            pointable = true,
-            makes_footstep_sound = true
-        })
+        if color then
+            local rgb = util.hex(settings.colors[color][1])
+            player:set_properties({
+                visual_size = {x = 1, y = 1, z = 1},
+                nametag_color = {r=rgb.r, g=rgb.g, b=rgb.b, a=255},
+                is_visible = true,
+                pointable = true,
+                makes_footstep_sound = true
+            })
+        end
         settings.add_interface(player)
     end
     for name, id in pairs(settings.black_screen) do

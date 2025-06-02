@@ -235,6 +235,7 @@ settings = {
         --     icon = "costumes_miniamogus_icon.png"
         -- }
     },
+    killed_people = {},
     players = {},
     roles = {},
     hud = {},
@@ -394,6 +395,7 @@ core.register_tool("settings:knife", {
     inventory_image = "settings_knife.png",
     on_use = function(itemstack, player, pointed_thing)
         local player_name = player:get_player_name()
+        local killed = settings.killed_people[player_name] or 0
         if settings.cooldown[player_name] then
             core.chat_send_player(player_name, S("Wait for cooldown!"))
         elseif settings.started and not settings.meeting_started then
@@ -403,7 +405,7 @@ core.register_tool("settings:knife", {
                 if settings.roles[vname] == "impostor" then return end
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
-                settings.killed_people[player_name] = settings.killed_people[player_name] + 1
+                killed = killed + 1
                 settings.cooldown[player_name] = true
                 core.after(settings.get_setting("kill_cooldown"), function()
                     settings.cooldown[player_name] = nil
