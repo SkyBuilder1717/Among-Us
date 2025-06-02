@@ -153,3 +153,25 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     end
     settings.show_costumes_menu(name)
 end)
+
+core.register_chatcommand("reset", {
+    privs = {server = true},
+    description = S("Remove costumes players didnt buy"),
+    func = function(name)
+        for _, player in pairs(core.get_connected_players()) do
+            local pname = player:get_player_name()
+            local meta = player:get_meta()
+            local list = meta:get_string("_costumes") or ""
+            local valid = {}
+            for costume in string.gmatch(list, "([^,]+)") do
+                local def = settings.costumes[costume]
+                if not def or not def.price or settings.has_costume(pname, costume) then
+                    table.insert(valid, costume)
+                end
+            end
+            meta:set_string("_costumes", table.concat(valid, ","))
+            settings.apply_costumes(pname)
+        end
+        return true, "Reset."
+    end
+})
