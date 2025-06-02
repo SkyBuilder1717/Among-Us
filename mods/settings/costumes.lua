@@ -87,6 +87,8 @@ function settings.show_costumes_menu(player_name)
         if (def.price or def.dev_only) and not worn[name] and not settings.has_costume(player_name, name) then
             if def.dev_only then
                 insert(formspec, string.format("tooltip[%s;%s\n(Unavailable)]", name, S(util.first(name:gsub("_", " ")))))
+            else
+                insert(formspec, string.format("tooltip[%s;%s\n(%s points)]", name, S(util.first(name:gsub("_", " "))), def.price))
             end
         else
             insert(formspec, string.format("tooltip[%s;%s]", name, S(util.first(name:gsub("_", " ")))))
