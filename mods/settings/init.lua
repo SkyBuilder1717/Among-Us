@@ -229,7 +229,8 @@ settings = {
         skull = {
             modifier = "^costumes_inside.png",
             icon = "costumes_inside_icon.png",
-            price = 5000
+            price = 5000,
+            no_visor = true
         },
         henry = {
             modifier = "^costumes_henry.png",

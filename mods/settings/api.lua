@@ -146,11 +146,14 @@ function settings.apply_costumes(name)
     end
     local color = settings.players[name]
     local colors = settings.colors[color]
-    local texture = {"player_api_red.png^[colorize:"..colors[1]..":255]^(player_api_green.png^[colorize:"..colors[2]..":255]^(player_api_blue.png^[colorize:"..colors[3]..":255]^(player_api_pink.png^[colorize:"..colors[4]..":255])))^visor.png"}
+    local visor = "^visor.png"
+    local texture = {"player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255])))"}
+    local costume_texture = {}
     for _, costume in ipairs(costumes) do
         local def = settings.costumes[costume]
         if def then
-            table.insert(texture, def.modifier)
+            table.insert(costume_texture, def.modifier)
+            if def.no_visor then visor = "" end
             if def.mesh then
                 player_api.set_model(player, def.mesh)
             else
@@ -158,7 +161,7 @@ function settings.apply_costumes(name)
             end
         end
     end
-    player_api.set_textures(player, {table.concat(texture)})
+    player_api.set_textures(player, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
 end
 
 function settings.toggle_costume(name, costume)
