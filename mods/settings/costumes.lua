@@ -18,17 +18,22 @@ function settings.show_costumes_menu(player_name)
         "formspec_version[7]",
         "size[12,8]"
     }
+
+    local textures = {}
+    for _, texture in pairs(player_api.get_textures(player)) do
+        table.insert(textures, core.formspec_escape(texture))
+    end
     if string.find(props.mesh, "glb") then
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
         insert(formspec, ";")
-        insert(formspec, core.formspec_escape(table.concat(player_api.get_textures(player), ",")))
+        insert(formspec, table.concat(textures, ","))
         insert(formspec, ";0,180;false;true;0,2.66;1]")
     else
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
         insert(formspec, ";")
-        insert(formspec, core.formspec_escape(table.concat(player_api.get_textures(player), ",")))
+        insert(formspec, table.concat(textures, ","))
         insert(formspec, ";0,180;false;true;0,79;30]")
     end
     

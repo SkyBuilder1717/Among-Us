@@ -12,11 +12,11 @@ function settings.show_colors_menu(name)
         "formspec_version[7]",
         "size[12,8]"
     }
+
     local textures = {}
     for _, texture in pairs(player_api.get_textures(player)) do
         table.insert(textures, core.formspec_escape(texture))
     end
-    
     if string.find(props.mesh, "glb") then
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
