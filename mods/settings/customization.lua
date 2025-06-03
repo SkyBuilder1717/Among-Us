@@ -64,12 +64,12 @@ function settings.show_customization_menu(player_name)
 
     t(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
     t(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
-    if util.admin(name) or util.starting(name) then
+    if util.admin(player_name) or util.starting(player_name) then
         t(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg_pressed.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
 
-    core.show_formspec(name, FORMNAME, table.concat(formspec))
-    settings.formspec[name] = nil
+    core.show_formspec(player_name, FORMNAME, table.concat(formspec))
+    settings.formspec[player_name] = nil
 end
 
 core.register_on_player_receive_fields(function(player, formname, fields)
