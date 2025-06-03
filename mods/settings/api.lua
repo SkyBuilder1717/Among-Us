@@ -163,7 +163,7 @@ function settings.apply_costumes(name)
             end
         end
     end
-    table.insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
+    table.insert(materials, table.concat({core.formspec_escape(table.concat({table.concat(texture), visor})), core.formspec_escape(table.concat(costume_texture))}))
     player_api.set_textures(player, materials)
 end
 
