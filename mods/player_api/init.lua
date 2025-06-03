@@ -22,6 +22,7 @@ local player_def = {
 -- Default player appearance
 player_api.register_model("character.glb", player_def)
 player_api.register_model("character_hat.glb", player_def)
+player_api.register_model("character_cap.glb", player_def)
 
 player_api.register_model("character.b3d", {
 	animation_speed = 30,
