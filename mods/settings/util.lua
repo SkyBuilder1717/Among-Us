@@ -73,4 +73,9 @@ function funcs.admin(name)
     return (name == sname) or core.check_player_privs(name, "server")
 end
 
+function funcs.starting(name)
+    local sname = core.settings:get("name")
+    return (name == sname) or core.check_player_privs(name, "start")
+end
+
 return funcs

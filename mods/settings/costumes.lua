@@ -96,7 +96,7 @@ function settings.show_costumes_menu(player_name)
     end
     insert(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
     insert(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg_pressed.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
-    if util.admin(player_name) then
+    if util.admin(name) or util.starting(name) then
         insert(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
     core.show_formspec(player_name, FORMNAME, table.concat(formspec))
@@ -144,7 +144,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         core.sound_play("selected", {to_player = name})
         return
     end
-    if fields.customization and util.admin(name) then
+    if fields.customization and util.admin(name) or util.starting(name) then
         settings.show_customization_menu(name)
         core.sound_play("selected", {to_player = name})
         return

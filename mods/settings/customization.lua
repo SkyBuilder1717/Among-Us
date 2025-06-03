@@ -1,10 +1,10 @@
 local FORMNAME = "settings:laptop_custom"
 local t = table.insert
 
-function settings.show_customization_menu(name)
-    local player = core.get_player_by_name(name)
+function settings.show_customization_menu(player_name)
+    local player = core.get_player_by_name(player_name)
     if not player then return end
-    if not util.admin(name) then return end
+    if not (util.admin(player_name) or util.starting(player_name)) then return end
     local formspec = {
         "formspec_version[7]",
         "size[12,8]"
@@ -21,19 +21,21 @@ function settings.show_customization_menu(name)
         t(formspec, def.title)
         t(formspec, "]")
 
-        t(formspec, "image_button[8,")
-        t(formspec, y_pos - (size / 1.75))
-        t(formspec, ";")
-        t(formspec, size)
-        t(formspec, ",")
-        t(formspec, size)
-        t(formspec, ";gui_buttonbg_small.png")
-        t(formspec, minus)
-        t(formspec, ";")
-        t(formspec, name)
-        t(formspec, "_minus;;true;false;gui_buttonbg_small_hover.png")
-        t(formspec, minus)
-        t(formspec, "]")
+        if util.admin(player_name) then
+            t(formspec, "image_button[8,")
+            t(formspec, y_pos - (size / 1.75))
+            t(formspec, ";")
+            t(formspec, size)
+            t(formspec, ",")
+            t(formspec, size)
+            t(formspec, ";gui_buttonbg_small.png")
+            t(formspec, minus)
+            t(formspec, ";")
+            t(formspec, name)
+            t(formspec, "_minus;;true;false;gui_buttonbg_small_hover.png")
+            t(formspec, minus)
+            t(formspec, "]")
+        end
 
         t(formspec, "label[9.2475,")
         t(formspec, y_pos)
@@ -41,26 +43,28 @@ function settings.show_customization_menu(name)
         t(formspec, settings.get_setting(name))
         t(formspec, "]")
 
-        t(formspec, "image_button[10,")
-        t(formspec, y_pos - (size / 1.75))
-        t(formspec, ";")
-        t(formspec, size)
-        t(formspec, ",")
-        t(formspec, size)
-        t(formspec, ";gui_buttonbg_small.png")
-        t(formspec, plus)
-        t(formspec, ";")
-        t(formspec, name)
-        t(formspec, "_plus;;true;false;gui_buttonbg_small_hover.png")
-        t(formspec, plus)
-        t(formspec, "]")
+        if util.admin(player_name) then
+            t(formspec, "image_button[10,")
+            t(formspec, y_pos - (size / 1.75))
+            t(formspec, ";")
+            t(formspec, size)
+            t(formspec, ",")
+            t(formspec, size)
+            t(formspec, ";gui_buttonbg_small.png")
+            t(formspec, plus)
+            t(formspec, ";")
+            t(formspec, name)
+            t(formspec, "_plus;;true;false;gui_buttonbg_small_hover.png")
+            t(formspec, plus)
+            t(formspec, "]")
+        end
 
         t(formspec, "image_button[3.5,8.5;5.75,3;settings_start.png;start;;true;false]")
     end
 
     t(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
     t(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
-    if util.admin(name) then
+    if util.admin(name) or util.starting(name) then
         t(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg_pressed.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
 
@@ -71,7 +75,7 @@ end
 core.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= FORMNAME then return end
     local player_name = player:get_player_name()
-    if not util.admin(player_name) then return end
+    if not (util.admin(player_name) or util.starting(player_name)) then return end
     if fields.quit then
         return
     end

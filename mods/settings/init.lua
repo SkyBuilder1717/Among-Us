@@ -260,6 +260,12 @@ local modpath = core.get_modpath(modname)
 util = dofile(modpath.."/util.lua")
 local S = core.get_translator(modname)
 
+core.register_privilege("start", {
+    description = S("Can start the game"),
+    give_to_admin = true,
+    give_to_singleplayer = true
+})
+
 for color, def in pairs(settings.colors) do
     core.register_item("settings:"..color, {
         type = "none",

@@ -71,7 +71,7 @@ function settings.show_colors_menu(name)
 
     insert(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg_pressed.png;colors;Color;true;true;gui_buttonbg_hover.png]")
     insert(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
-    if util.admin(name) then
+    if util.admin(name) or util.starting(name) then
         insert(formspec, "image_button[7.85,0.45;2.75,0.75;gui_buttonbg.png;customization;Game;true;true;gui_buttonbg_hover.png]")
     end
     core.show_formspec(name, FORMNAME, table.concat(formspec))
