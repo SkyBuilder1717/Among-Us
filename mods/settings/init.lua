@@ -446,13 +446,3 @@ core.register_tool("settings:knife", {
     end,
     on_drop = function(itemstack, dropper, pos) return itemstack end
 })
-
-core.register_globalstep(function(dtime)
-    for _, player in pairs(core.get_connected_players()) do
-        local name = player:get_player_name()
-        local ver = core.get_player_information(name).version_string
-        if not ((ver == "5.11.0") or (ver == "5.12.0")) then
-            core.kick_player(name, "Update to version 5.11 or newer!")
-        end
-    end
-end)

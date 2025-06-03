@@ -16,13 +16,13 @@ function settings.show_colors_menu(name)
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
         insert(formspec, ";")
-        insert(formspec, core.formspec_escape(table.concat(player_api.get_textures(player), ",")))
+        insert(formspec, table.concat(player_api.get_textures(player), ","))
         insert(formspec, ";0,180;false;true;0,2.66;1]")
     else
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
         insert(formspec, ";")
-        insert(formspec, core.formspec_escape(table.concat(player_api.get_textures(player), ",")))
+        insert(formspec, table.concat(player_api.get_textures(player), ","))
         insert(formspec, ";0,180;false;true;0,79;30]")
     end
     
