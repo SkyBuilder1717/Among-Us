@@ -692,10 +692,11 @@ core.register_node("maps:vent", {
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
+		if ((settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") or (settings.roles[name] == "ghost")) then
+			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
+		end
 		if ((settings.roles[name] == "impostor") or (settings.roles[name] == "engineer")) and not (player:get_properties().visual_size.x < 1) then
 			settings.show_vents_menu(name, pos)
-		else
-			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end
 	end
 })

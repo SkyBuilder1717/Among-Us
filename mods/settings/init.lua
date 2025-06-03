@@ -214,7 +214,8 @@ settings = {
         french_toast = {
             modifier = "^costumes_bread.png",
             icon = "costumes_bread_icon.png",
-            price = 10000
+            price = 10000,
+            no_visor = true
         },
         grey_hoodie = {
             modifier = "^costumes_hoodie.png",
