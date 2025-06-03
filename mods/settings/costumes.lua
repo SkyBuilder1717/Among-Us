@@ -144,7 +144,7 @@ core.register_on_player_receive_fields(function(player, formname, fields)
         core.sound_play("selected", {to_player = name})
         return
     end
-    if fields.customization and util.admin(name) or util.starting(name) then
+    if fields.customization and (util.admin(name) or util.starting(name)) then
         settings.show_customization_menu(name)
         core.sound_play("selected", {to_player = name})
         return
