@@ -58,7 +58,7 @@ function points.add(name, count)
     count = math.floor(count)
     local bal = points.get(name)
     points.players[name] = bal + count
-    core.chat_send_player(name, S("Got @1 points!", count))
+    core.chat_send_player(name, S("You have got @1 points!", count))
     points.save()
 end
 
