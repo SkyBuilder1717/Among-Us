@@ -247,6 +247,13 @@ settings = {
             mesh = "character_hat.glb",
             icon = "costumes_miniamogus_icon.png",
             price = 15000
+        },
+        cap = {
+            modifier = "",
+            mesh = "character_cap.glb",
+            icon = "costumes_cap_icon.png",
+            material = {"costumes_cap.png"},
+            price = 2000
         }
     },
     killed_people = {},
