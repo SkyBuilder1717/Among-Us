@@ -146,6 +146,7 @@ function settings.apply_costumes(name)
     end
     local color = settings.players[name]
     local colors = settings.colors[color]
+    local mesh = "character.glb"
     local visor = "^visor.png)"
     local texture = {"((player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255]))))"}
     local costume_texture = {}
@@ -157,13 +158,12 @@ function settings.apply_costumes(name)
             if def.no_visor then visor = ")" end
             if def.material then table.insert_all(materials, def.material) end
             if def.mesh then
-                player_api.set_model(player, def.mesh)
-            else
-                player_api.set_model(player, "character.glb")
+                mesh = def.mesh
             end
         end
     end
     table.insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
+    player_api.set_model(player, mesh)
     player_api.set_textures(player, materials)
 end
 
@@ -175,6 +175,7 @@ function settings.toggle_costume(name, costume)
     local found = false
     for c in string.gmatch(list, "([^,]+)") do
         if c == costume then
+            local def = settings.costumes[costume]
             found = true
         else
             table.insert(result, c)
