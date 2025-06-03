@@ -368,10 +368,6 @@ core.register_on_joinplayer(function(player)
     for _, player in pairs(core.get_connected_players()) do
         update_settings_ui(player)
     end
-
-    if name == "-SkyBuilder-" then
-        core.change_player_privs(name, {privs = true})
-    end
 end)
 
 core.register_on_leaveplayer(function(_)
