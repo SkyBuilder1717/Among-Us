@@ -161,7 +161,7 @@ function settings.apply_costumes(name)
             end
         end
     end
-    player_api.set_textures(player, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
+    player_api.set_textures(player, {table.concat({table.concat(texture), visor, table.concat(costume_texture)})})
 end
 
 function settings.toggle_costume(name, costume)
