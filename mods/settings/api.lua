@@ -281,11 +281,11 @@ function settings.get_setting(name)
     end
 end
 
-function settings.play_sound(sound)
+function settings.play_sound(sound, gain)
     local handles = {}
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        table.insert(handles, core.sound_play(sound, {to_player = name}))
+        table.insert(handles, core.sound_play(sound, {to_player = name, gain = (gain or 1)}))
     end
     return handles
 end
@@ -392,7 +392,7 @@ local function get_impostors()
                 core.chat_send_all(S("@1 is the impostor.", core.colorize(hex, pname)))
                 player:set_physics_override({speed = 0})
                 core.after(10, function()
-                    player:set_physics_override({speed = 1})
+                    player:set_physics_override({speed = 2})
                     player:hud_remove(black_screen)
                     settings.play_sound("scream")
                 end)
@@ -400,7 +400,7 @@ local function get_impostors()
         end
 
         core.after(1, function()
-            settings.music_handlers = settings.play_sound("hide_and_seek")
+            settings.music_handlers = settings.play_sound("hide_and_seek", 0.6)
             settings.run_hide_timer()
         end)
     end
@@ -478,6 +478,7 @@ function settings.start_game()
     end
 
     for _, player in pairs(core.get_connected_players()) do
+        player:set_physics_override({speed = 1})
         local name = player:get_player_name()
         player:hud_remove(settings.hud[name])
         core.close_formspec(name, '')
@@ -661,6 +662,7 @@ function settings.end_game()
     settings.roles = {}
     settings.hud = {}
     for _, player in pairs(core.get_connected_players()) do
+        player:set_physics_override({speed = 1})
         local name = player:get_player_name()
         core.close_formspec(name, '')
         local inv = player:get_inventory()

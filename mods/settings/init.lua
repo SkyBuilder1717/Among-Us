@@ -446,11 +446,11 @@ core.register_tool("settings:knife", {
                 local victim = pointed_thing.ref
                 local vname = victim:get_player_name()
                 if settings.roles[vname] == "impostor" then return end
+                settings.cooldown[player_name] = true
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
                 killed = killed + 1
-                settings.cooldown[player_name] = true
-                core.after((hide_and_seek and 1 or settings.get_setting("kill_cooldown")), function()
+                core.after((hide_and_seek and 5 or settings.get_setting("kill_cooldown")), function()
                     settings.cooldown[player_name] = nil
                     local plr = core.get_player_by_name(player_name)
                     if settings.started and not hide_and_seek and not settings.meeting_started and plr and not (plr:get_properties().visual_size.x < 1) and (settings.roles[player_name] == "impostor") then

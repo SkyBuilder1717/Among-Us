@@ -65,6 +65,7 @@ core.register_on_joinplayer(function(player)
 	inv:set_size("hand", 1)
 	player_api.set_model(player, "character.glb")
 	player:set_properties({show_on_minimap = false})
+    player:set_physics_override({speed = 1})
 	local name = player:get_player_name()
 	local color = storage:get("_player_"..name)
 	if color then
