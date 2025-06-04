@@ -458,6 +458,7 @@ function settings.run_hide_timer()
                 end
             end
         end
+        if not settings.started or not settings.get_setting("hide_and_seek") then return end
         settings.run_hide_timer()
     end)
 end
