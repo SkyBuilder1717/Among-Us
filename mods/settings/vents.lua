@@ -126,6 +126,9 @@ function settings.show_vents_menu(name, pos)
 
     core.sound_play("vent", {to_player = name})
     core.show_formspec(name, FORMNAME, table.concat(formspec))
+    core.after(5, function()
+        core.close_formspec(name, FORMNAME)
+    end)
 end
 
 core.register_on_player_receive_fields(function(player, formname, fields)

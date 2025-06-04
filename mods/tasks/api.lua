@@ -51,6 +51,7 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
         return
     end
     if settings.roles[name] == "impostor" then return end
+    if hide_and_seek and (settings.roles[name] == "ghost") then return end
     if settings.get_setting("hide_and_seek") and settings.hide_timer < 30 then return end
     for _, task in pairs(tasks.players[name]) do
         if not (task.index >= #task.states) then
@@ -188,7 +189,7 @@ function tasks.update_hud()
         tasks.reset_hud(name)
         local hide_and_seek = settings.get_setting("hide_and_seek")
         if not (settings.roles[name] == "impostor") then
-            if (not hide_and_seek) or (hide_and_seek and settings.hide_timer > 30) then
+            if (not hide_and_seek) or (hide_and_seek and (not (settings.roles[name] == "ghost") and (settings.hide_timer > 30))) then
                 for i, task in ipairs(new_tasks) do
                     local index = task.index + 1
                     local states = table.copy(task.states)
