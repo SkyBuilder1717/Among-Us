@@ -45,7 +45,7 @@ core.register_entity("settings:dead_body", {
         end
     end,
     on_punch = function(self, player)
-        if not player:is_player() then return true end
+        if not player:is_player() or settings.get_setting("hide_and_seek") then return true end
         if player:get_properties().visual_size.x < 1 then return end
         local player_name = player:get_player_name()
         settings.emergency_meeting(player_name, true)
@@ -151,18 +151,39 @@ function settings.apply_costumes(name)
     local texture = {"((player_api_red.png^[colorize:", colors[1], ":255]^(player_api_green.png^[colorize:", colors[2], ":255]^(player_api_blue.png^[colorize:", colors[3], ":255]^(player_api_pink.png^[colorize:", colors[4], ":255]))))"}
     local costume_texture = {}
     local materials = {}
+    local behind = {}
+    local front = {}
     for _, costume in ipairs(costumes) do
         local def = settings.costumes[costume]
         if def then
             table.insert(costume_texture, def.modifier)
             if def.no_visor then visor = ")" end
-            if def.material then table.insert_all(materials, def.material) end
+            if def.material then
+                if def.material == "player_skin" then
+                    if def.material_behind then
+                        table.insert(behind, table.concat({table.concat(texture), "^visor.png)"}))
+                    else
+                        table.insert(front, table.concat({table.concat(texture), "^visor.png)"}))
+                    end
+                else
+                    if def.material_behind then
+                        table.insert_all(behind, def.material)
+                    else
+                        table.insert_all(front, def.material)
+                    end
+                end
+            end
             if def.mesh then
                 mesh = def.mesh
             end
         end
     end
+    if settings.started and settings.get_setting("hide_and_seek") and (settings.roles[name] == "impostor") then
+        table.insert(costume_texture, "^player_api_impostor.png")
+    end
+    table.insert_all(materials, behind)
     table.insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
+    table.insert_all(materials, front)
     player_api.set_model(player, mesh)
     player_api.set_textures(player, materials)
 end
@@ -220,6 +241,12 @@ function settings.set_setting(name, value)
     if setting.type == "int" then
         if (value > setting.max) or (setting.min > value) then return false end
         storage:set_int("_setting_"..name, value)
+    elseif setting.type == "boolean" then
+        if value then
+            storage:set_int("_setting_"..name, 1)
+        else
+            storage:set_int("_setting_"..name, 0)
+        end
     end
     return true
 end
@@ -231,6 +258,12 @@ function settings.get_setting(name)
     if not value then
         if setting.type == "int" then
             storage:set_int("_setting_"..name, setting.default)
+        elseif setting.type == "boolean" then
+            if setting.default then
+                storage:set_int("_setting_"..name, 1)
+            else
+                storage:set_int("_setting_"..name, 1)
+            end
         end
         return setting.default
     else
@@ -240,6 +273,8 @@ function settings.get_setting(name)
             else
                 return tonumber(value)
             end
+        elseif setting.type == "boolean" then
+            return (tonumber(value) > 0)
         else
             return value
         end
@@ -247,10 +282,12 @@ function settings.get_setting(name)
 end
 
 function settings.play_sound(sound)
+    local handles = {}
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        core.sound_play(sound, {to_player = name})
+        table.insert(handles, core.sound_play(sound, {to_player = name}))
     end
+    return handles
 end
 
 function settings.teleport_all(lobby)
@@ -290,7 +327,8 @@ function settings.tell_role(name)
 end
 
 local function get_impostors()
-    local impostors = settings.get_setting("impostors")
+    local hide_and_seek = settings.get_setting("hide_and_seek")
+    local impostors = (hide_and_seek and 1 or settings.get_setting("impostors"))
     local players = table.copy(core.get_connected_players())
     for i = 1, impostors do
         local index = math.random(1, #players)
@@ -308,30 +346,127 @@ local function get_impostors()
             settings.killed_people[player_name] = 0
         end
     end
-    local engineers = settings.get_setting("engineers")
-    for i = 0, engineers do
-        if i > 0 then
-            local index = math.random(1, #players)
-            local plr = players[index]
-            local player_name = plr:get_player_name()
-            settings.roles[player_name] = "engineer"
-            local inv = plr:get_inventory()
-            inv:set_list("main", {})
-            table.remove(players, index)
+    if not hide_and_seek then
+        local engineers = settings.get_setting("engineers")
+        for i = 0, engineers do
+            if i > 0 then
+                local index = math.random(1, #players)
+                local plr = players[index]
+                local player_name = plr:get_player_name()
+                settings.roles[player_name] = "engineer"
+                local inv = plr:get_inventory()
+                inv:set_list("main", {})
+                table.remove(players, index)
+            end
         end
     end
     for _, player in pairs(players) do
         local name = player:get_player_name()
         settings.roles[name] = "crewmate"
+        if hide_and_seek then
+            settings.vents[name] = 3
+        end
         local inv = player:get_inventory()
         inv:set_list("main", {})
     end
+
+    if hide_and_seek then
+        core.set_timeofday(0)
+        settings.hide_timer = 200
+        tasks.generate_tasks()
+        for pname, role in pairs(settings.roles) do
+            if role == "impostor" then
+                local player = core.get_player_by_name(pname)
+                local black_screen = player:hud_add({
+                    type = "image",
+                    position = {x=0.5, y=0.5},
+                    name = "black_screen",
+                    scale = {x = 15, y = 15},
+                    text = "[fill:128x128:0,0:#000000ff",
+                    alignment = {x=0, y=0},
+                    offset = {x=0, y=0},
+                    z_index = 5000
+                })
+                local color = settings.players[pname]
+                local hex = settings.colors[color][1]
+                core.chat_send_all(S("@1 is the impostor.", core.colorize(hex, pname)))
+                player:set_physics_override({speed = 0})
+                core.after(10, function()
+                    player:set_physics_override({speed = 1})
+                    player:hud_remove(black_screen)
+                    settings.play_sound("scream")
+                end)
+            end
+        end
+
+        core.after(1, function()
+            settings.music_handlers = settings.play_sound("hide_and_seek")
+            settings.run_hide_timer()
+        end)
+    end
+end
+
+function settings.run_hide_timer()
+    if not settings.started or not settings.get_setting("hide_and_seek") then return end
+    local huds = {}
+    settings.hide_timer = settings.hide_timer - 1
+
+    tasks.update_hud()
+
+    if settings.hide_timer <= 30 and settings.hide_timer % 5 == 0 then
+        for pname, role in pairs(settings.roles) do
+            if role == "impostor" then
+                local impostor = core.get_player_by_name(pname)
+                for tname, trole in pairs(settings.roles) do
+                    local target = core.get_player_by_name(tname)
+                    if trole ~= "impostor" and settings.roles[tname] ~= "ghost" and target then
+                        settings.play_sound("ping")
+                        table.insert(huds,
+                            impostor:hud_add({
+                                type = "waypoint",
+                                name = tname,
+                                world_pos = target:get_pos(),
+                                number = 0xff0000
+                            })
+                        )
+                    end
+                end
+            end
+        end
+    end
+
+    if settings.hide_timer <= 0 then
+        core.chat_send_all(core.colorize("cyan", "Crewmates win!"))
+        settings.play_sound("win_crewmate")
+        for name, role in pairs(settings.roles) do
+            if not (role == "impostor") then
+                points.add(name, 250 + tasks.completed_tasks[name])
+            else
+                points.add(name, (100 * settings.killed_people[name]))
+            end
+        end
+        settings.end_game()
+        return
+    end
+
+    core.after(1, function()
+        for pname, role in pairs(settings.roles) do
+            local impostor = core.get_player_by_name(pname)
+            if impostor and (role == "impostor") then
+                for _, id in pairs(huds) do
+                    impostor:hud_remove(id)
+                end
+            end
+        end
+        settings.run_hide_timer()
+    end)
 end
 
 function settings.start_game()
     settings.play_sound("role")
     settings.restore("skeld")
     settings.ship()
+    core.set_timeofday(0.5)
     get_impostors()
     local impostors_table = {}
     for pname, prole in pairs(settings.roles) do
@@ -349,14 +484,16 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
-        local role = settings.tell_role(name)
-        if role == "impostor" then
-            core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!@nUse /teammates to check your remain teammates!"))
-            core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
-        elseif role == "engineer" then
-            core.chat_send_player(name, S("Move in the vents and complete tasks!"))
-        else
-            core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
+        if not settings.get_setting("hide_and_seek") then
+            local role = settings.tell_role(name)
+            if role == "impostor" then
+                core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!@nUse /teammates to check your remain teammates!"))
+                core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
+            elseif role == "engineer" then
+                core.chat_send_player(name, S("Move in the vents and complete tasks!"))
+            else
+                core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
+            end
         end
     end
     settings.teleport_all()
@@ -480,6 +617,7 @@ function settings.finish_voting()
 end
 
 function settings.check_end_game()
+    local hide_and_seek = settings.get_setting("hide_and_seek")
     local impostors = 0
     local crewmates = 0
     for name, role in pairs(settings.roles) do
@@ -502,7 +640,7 @@ function settings.check_end_game()
         end
         settings.play_sound("win_crewmate")
         settings.end_game()
-    elseif impostors >= crewmates then
+    elseif (hide_and_seek and (crewmates == 0)) or ((not hide_and_seek) and (impostors >= crewmates)) then
         core.chat_send_all(core.colorize("red", S("Impostors win!")))
         for name, role in pairs(settings.roles) do
             if not (role == "impostor") then
@@ -559,6 +697,10 @@ function settings.end_game()
     settings.ship()
     tasks.completed_tasks = {}
     settings.killed_people = {}
+    for _, handle in pairs(settings.music_handlers) do
+        core.sound_stop(handle)
+    end
+    settings.music_handlers = nil
 end
 
 function settings.start_timer()
@@ -685,6 +827,7 @@ core.register_on_chat_message(function(name, message)
 end)
 
 function settings.kill(name)
+    local hide_and_seek = settings.get_setting("hide_and_seek")
     local player = core.get_player_by_name(name)
     core.sound_play("kill_crewmate", {to_player = name})
     if player then
@@ -706,7 +849,14 @@ function settings.kill(name)
             makes_footstep_sound = false
         })
         settings.tell_role(name)
-        core.chat_send_player(name, S("You have been killed, but you still can complete tasks!"))
+        if not hide_and_seek then
+            core.chat_send_player(name, S("You have been killed, but you still can complete tasks!"))
+        else
+            settings.play_sound("killed")
+            local color = settings.players[name]
+            local hex = settings.colors[color][1]
+            core.chat_send_all(S("@1 killed!", core.colorize(hex, name)))
+        end
     end
     settings.check_end_game()
 end

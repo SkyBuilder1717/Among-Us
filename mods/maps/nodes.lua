@@ -638,6 +638,7 @@ core.register_node("maps:button", {
 		fixed = {-0.5, -0.5, -0.5, 1.5, 0.5, 1.5}
 	},
 	on_rightclick = function(_, _, player)
+		if settings.get_setting("hide_and_seek") then return end
 		local name = player:get_player_name()
 		if settings.started and not settings.meeting_started and not (settings.active_sabotage and settings.current_sabotage) and not (player:get_properties().visual_size.x < 1) then
 			settings.show_button_menu(name)
@@ -692,10 +693,13 @@ core.register_node("maps:vent", {
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
-		if ((settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") or (settings.roles[name] == "ghost")) then
+    	local hide_and_seek = settings.get_setting("hide_and_seek")
+		if hide_and_seek and ((settings.vents[name] < 1) or (settings.hide_timer < 30)) then return end
+		if ((settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") or ((settings.roles[name] == "ghost") and not hide_and_seek)) then
 			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end
-		if ((settings.roles[name] == "impostor") or (settings.roles[name] == "engineer")) and not (player:get_properties().visual_size.x < 1) then
+    	local hide_and_seek = settings.get_setting("hide_and_seek")
+		if ((hide_and_seek and (settings.roles[name] == "crewmate")) or (not hide_and_seek and (settings.roles[name] == "impostor") or (settings.roles[name] == "engineer"))) and not (player:get_properties().visual_size.x < 1) then
 			settings.show_vents_menu(name, pos)
 		end
 	end

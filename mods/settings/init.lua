@@ -23,7 +23,8 @@ settings = {
             type = "int",
             default = 4,
             min = 1, 
-            max = 8
+            max = 8,
+            hide_and_seek = true
         },
         kill_cooldown = {
             title = "Kill cooldown",
@@ -71,6 +72,11 @@ settings = {
             default = 1,
             min = 0, 
             max = 3
+        },
+        hide_and_seek = {
+            title = "Hide and Seek",
+            type = "boolean",
+            default = false
         }
     },
     colors = {
@@ -247,12 +253,15 @@ settings = {
             modifier = "",
             mesh = "character_hat.glb",
             icon = "costumes_miniamogus_icon.png",
+            material = "player_skin",
+            material_behind = true,
             price = 15000
         },
         cap = {
             modifier = "",
             mesh = "character_cap.glb",
             icon = "costumes_cap_icon.png",
+            material_behind = true,
             material = {"costumes_cap.png"},
             price = 2000
         }
@@ -262,7 +271,8 @@ settings = {
     roles = {},
     hud = {},
     formspec = {},
-    cooldown = {}
+    cooldown = {},
+    vents = {}
 }
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
@@ -319,19 +329,23 @@ function update_settings_ui(player)
         settings.lobby.impostors.auto = 3
     end
 
+    local hide_and_seek = settings.get_setting("hide_and_seek")
+    
     local text = ""
     for name, setting in pairs(settings.lobby) do
-        local value = settings.get_setting(name)
-        text = text .. setting.title..": " .. value
-        local subfix = setting.subfix
-        if subfix then
-            text = text.." "..subfix
+        if ((hide_and_seek and setting.hide_and_seek) or name == "hide_and_seek") or (not hide_and_seek) then
+            local value = settings.get_setting(name)
+            text = text .. setting.title..": " .. dump(value)
+            local subfix = setting.subfix
+            if subfix then
+                text = text.." "..subfix
+            end
+            local auto = setting.auto
+            if auto and (auto < value) then
+                text = text.." (Auto: " .. auto .. ")"
+            end
+            text = text.."\n"
         end
-        local auto = setting.auto
-        if auto and (auto < value) then
-            text = text.." (Auto: " .. auto .. ")"
-        end
-        text = text.."\n"
     end
 	local name = player:get_player_name()
     player:hud_change(settings.hud[name], "text", text)
@@ -422,9 +436,10 @@ core.register_tool("settings:knife", {
     description = S("Knife (Punch to Kill)"),
     inventory_image = "settings_knife.png",
     on_use = function(itemstack, player, pointed_thing)
+        local hide_and_seek = settings.get_setting("hide_and_seek")
         local player_name = player:get_player_name()
         local killed = settings.killed_people[player_name] or 0
-        if settings.cooldown[player_name] then
+        if settings.cooldown[player_name] and not hide_and_seek then
             core.chat_send_player(player_name, S("Wait for cooldown!"))
         elseif settings.started and not settings.meeting_started then
             if pointed_thing.type == "object" and pointed_thing.ref:is_player() then
@@ -435,10 +450,10 @@ core.register_tool("settings:knife", {
                 core.sound_play("kill", {to_player = player_name})
                 killed = killed + 1
                 settings.cooldown[player_name] = true
-                core.after(settings.get_setting("kill_cooldown"), function()
+                core.after((hide_and_seek and 1 or settings.get_setting("kill_cooldown")), function()
                     settings.cooldown[player_name] = nil
                     local plr = core.get_player_by_name(player_name)
-                    if settings.started and not settings.meeting_started and plr and not (plr:get_properties().visual_size.x < 1) and (settings.roles[player_name] == "impostor") then
+                    if settings.started and not hide_and_seek and not settings.meeting_started and plr and not (plr:get_properties().visual_size.x < 1) and (settings.roles[player_name] == "impostor") then
                         core.chat_send_player(player_name, S("You can kill again."))
                     end
                 end)

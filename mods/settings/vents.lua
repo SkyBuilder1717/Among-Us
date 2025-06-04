@@ -161,6 +161,9 @@ core.register_on_player_receive_fields(function(player, formname, fields)
             player:set_pos({x = def.x, y = def.y, z = def.z})
             core.sound_play("vent", {to_player = name})
             core.close_formspec(name, FORMNAME)
+            if settings.vents[name] then
+                settings.vents[name] = settings.vents[name] - 1
+            end
         end
     end
 end)

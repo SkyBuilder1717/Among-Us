@@ -51,6 +51,7 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
         return
     end
     if settings.roles[name] == "impostor" then return end
+    if settings.get_setting("hide_and_seek") and settings.hide_timer < 30 then return end
     for _, task in pairs(tasks.players[name]) do
         if not (task.index >= #task.states) then
             local index = task.index + 1
@@ -69,6 +70,9 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
                     else
                         core.sound_play("task_completed", {to_player = name})
                         tasks.completed_tasks[name] = tasks.completed_tasks[name] + 50
+                        if settings.get_setting("hide_and_seek") then
+                            settings.hide_timer = math.max(0, settings.hide_timer - 15)
+                        end
                     end
                 end
                 tasks.update_hud()
@@ -97,32 +101,61 @@ function tasks.show_taskbar()
             end
         end
     end
+
     local percentage = current / total
     local width = 6 * percentage
+
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
         if not tasks.hud[name] then tasks.hud[name] = {} end
-        table.insert(tasks.hud[name], player:hud_add({
-            type = "image",
-            position = {x=0.2, y=0.025},
-            name = "taskbar_bg",
-            scale = {x=6, y=6},
-            text = "tasks_taskbar_bg.png",
-            alignment = {x=0, y=0},
-            z_index = 0
-        }))
-        table.insert(tasks.hud[name], player:hud_add({
-            type = "image",
-            position = {x=0.0065, y=0.025},
-            name = "taskbar_fg",
-            scale = {x=width, y=6},
-            text = "tasks_taskbar_fg.png",
-            alignment = {x=1, y=0},
-            z_index = 0
-        }))
+        if settings.get_setting("hide_and_seek") then
+            width = 6 * (settings.hide_timer / 200)
+            local fg_texture = "tasks_taskbar_fg.png"
+            if settings.hide_timer <= 30 then
+                fg_texture = "tasks_taskbar_red.png"
+            end
+
+            table.insert(tasks.hud[name], player:hud_add({
+                type = "image",
+                position = {x=0.2, y=0.025},
+                name = "timer_bar_bg",
+                scale = {x=6, y=6},
+                text = "tasks_taskbar_bg.png",
+                alignment = {x=0, y=0},
+                z_index = 0
+            }))
+            table.insert(tasks.hud[name], player:hud_add({
+                type = "image",
+                position = {x=0.0065, y=0.025},
+                name = "timer_bar_fg",
+                scale = {x=width, y=6},
+                text = fg_texture,
+                alignment = {x=1, y=0},
+                z_index = 1
+            }))
+        else
+            table.insert(tasks.hud[name], player:hud_add({
+                type = "image",
+                position = {x=0.2, y=0.025},
+                name = "taskbar_bg",
+                scale = {x=6, y=6},
+                text = "tasks_taskbar_bg.png",
+                alignment = {x=0, y=0},
+                z_index = 0
+            }))
+            table.insert(tasks.hud[name], player:hud_add({
+                type = "image",
+                position = {x=0.0065, y=0.025},
+                name = "taskbar_fg",
+                scale = {x=width, y=6},
+                text = "tasks_taskbar_fg.png",
+                alignment = {x=1, y=0},
+                z_index = 0
+            }))
+        end
     end
 
-    if percentage == 1 then
+    if (not settings.get_setting("hide_and_seek")) and (percentage == 1) then
         core.chat_send_all(S("Tasks completed!").." "..core.colorize("cyan", S("Crewmates win!")))
         for name, role in pairs(settings.roles) do
             if (role == "crewmate") or (role == "ghost") or (role == "engineer") then
@@ -153,117 +186,120 @@ function tasks.update_hud()
         end
         local player = core.get_player_by_name(name)
         tasks.reset_hud(name)
+        local hide_and_seek = settings.get_setting("hide_and_seek")
         if not (settings.roles[name] == "impostor") then
-            for i, task in ipairs(new_tasks) do
-                local index = task.index + 1
-                local states = table.copy(task.states)
-                local color
-                local ypos = 0.11
-                if not (settings.active_sabotage and settings.current_sabotage == "communication") then
-                    if task.index > #states then
-                        color = 0xFFFF00
-                    elseif (task.index == #states) and (not task.manual) then
-                        color = 0x00FF00
-                        index = task.index
-                    elseif task.index > 0 then
-                        color = 0xFFFF00
-                    elseif task.ready then
-                        index = 1
-                        color = 0xFFFF00
+            if (not hide_and_seek) or (hide_and_seek and settings.hide_timer > 30) then
+                for i, task in ipairs(new_tasks) do
+                    local index = task.index + 1
+                    local states = table.copy(task.states)
+                    local color
+                    local ypos = 0.11
+                    if not (settings.active_sabotage and settings.current_sabotage == "communication") then
+                        if task.index > #states then
+                            color = 0xFFFF00
+                        elseif (task.index == #states) and (not task.manual) then
+                            color = 0x00FF00
+                            index = task.index
+                        elseif task.index > 0 then
+                            color = 0xFFFF00
+                        elseif task.ready then
+                            index = 1
+                            color = 0xFFFF00
+                        else
+                            index = 1
+                            color = 0xFFFFFF
+                        end
+                        if #states > 1 and not task.text_only then
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "text",
+                                position = {x=0.075, y=ypos + (0.025 * i)},
+                                name = task.name,
+                                scale = {x = 1, y = 1},
+                                text = S(states[index].title.." (@1/@2)",
+                                    task.index,
+                                    #states),
+                                alignment = {x=0, y=0},
+                                z_index = 1,
+                                number = color,
+                                style = 0
+                            }))
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "waypoint",
+                                name = S(states[index].title.." (@1/@2)",
+                                    task.index,
+                                    #states),
+                                world_pos = states[index].pos,
+                                z_index = 1,
+                                number = color,
+                            }))
+                        elseif task.index > #states then
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "text",
+                                position = {x=0.075, y=ypos + (0.025 * i)},
+                                name = task.name,
+                                scale = {x = 1, y = 1},
+                                text = S(states[#states].title.." (@1)",
+                                    task.index),
+                                alignment = {x=0, y=0},
+                                z_index = 1,
+                                number = color,
+                                style = 0
+                            }))
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "waypoint",
+                                name = S(states[#states].title.." (@1)",
+                                    task.index),
+                                world_pos = states[#states].pos,
+                                z_index = 1,
+                                number = color,
+                            }))
+                        else
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "text",
+                                position = {x=0.075, y=ypos + (0.025 * i)},
+                                name = task.name,
+                                scale = {x = 1, y = 1},
+                                text = S(states[index].title),
+                                alignment = {x=0, y=0},
+                                z_index = 1,
+                                number = color,
+                                style = 0
+                            }))
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "waypoint",
+                                name = S(states[index].title),
+                                world_pos = states[index].pos,
+                                z_index = 1,
+                                number = color,
+                            }))
+                        end
                     else
-                        index = 1
-                        color = 0xFFFFFF
-                    end
-                    if #states > 1 and not task.text_only then
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "text",
-                            position = {x=0.075, y=ypos + (0.025 * i)},
-                            name = task.name,
-                            scale = {x = 1, y = 1},
-                            text = S(states[index].title.." (@1/@2)",
-                                task.index,
-                                #states),
-                            alignment = {x=0, y=0},
-                            z_index = 1,
-                            number = color,
-                            style = 0
-                        }))
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "waypoint",
-                            name = S(states[index].title.." (@1/@2)",
-                                task.index,
-                                #states),
-                            world_pos = states[index].pos,
-                            z_index = 1,
-                            number = color,
-                        }))
-                    elseif task.index > #states then
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "text",
-                            position = {x=0.075, y=ypos + (0.025 * i)},
-                            name = task.name,
-                            scale = {x = 1, y = 1},
-                            text = S(states[#states].title.." (@1)",
-                                task.index),
-                            alignment = {x=0, y=0},
-                            z_index = 1,
-                            number = color,
-                            style = 0
-                        }))
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "waypoint",
-                            name = S(states[#states].title.." (@1)",
-                                task.index),
-                            world_pos = states[#states].pos,
-                            z_index = 1,
-                            number = color,
-                        }))
-                    else
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "text",
-                            position = {x=0.075, y=ypos + (0.025 * i)},
-                            name = task.name,
-                            scale = {x = 1, y = 1},
-                            text = S(states[index].title),
-                            alignment = {x=0, y=0},
-                            z_index = 1,
-                            number = color,
-                            style = 0
-                        }))
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "waypoint",
-                            name = S(states[index].title),
-                            world_pos = states[index].pos,
-                            z_index = 1,
-                            number = color,
-                        }))
-                    end
-                else
-                    if i == 1 then
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "text",
-                            position = {x=0.075, y=ypos + (0.025 * i)},
-                            name = task.name,
-                            scale = {x = 1, y = 1},
-                            text = S("Communications disabled!"),
-                            alignment = {x=0, y=0},
-                            z_index = 1,
-                            number = 0xffff00,
-                            style = 0
-                        }))
-                        table.insert(tasks.hud[name], player:hud_add({
-                            type = "waypoint",
-                            name = S("Communications disabled!"),
-                            world_pos = {x = 9, y = 2, z = -45},
-                            z_index = 1,
-                            number = 0xffff00,
-                        }))
+                        if i == 1 then
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "text",
+                                position = {x=0.075, y=ypos + (0.025 * i)},
+                                name = task.name,
+                                scale = {x = 1, y = 1},
+                                text = S("Communications disabled!"),
+                                alignment = {x=0, y=0},
+                                z_index = 1,
+                                number = 0xffff00,
+                                style = 0
+                            }))
+                            table.insert(tasks.hud[name], player:hud_add({
+                                type = "waypoint",
+                                name = S("Communications disabled!"),
+                                world_pos = {x = 9, y = 2, z = -45},
+                                z_index = 1,
+                                number = 0xffff00,
+                            }))
+                        end
                     end
                 end
             end
         end
-        tasks.show_taskbar(player)
     end
+    tasks.show_taskbar()
 end
 
 function tasks.generate_tasks()

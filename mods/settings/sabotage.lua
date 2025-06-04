@@ -162,6 +162,7 @@ core.register_chatcommand("close_door", {
     description = "Close doors as an impostor!",
     params = "<room>",
     func = function(name, param)
+        if settings.get_setting("hide_and_seek") then return false end
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage then
             local allowed_rooms = settings.allowed_rooms[settings.map]
             if param == "" or not util.containk(allowed_rooms, param) then
@@ -213,6 +214,7 @@ core.register_chatcommand("close_door", {
 core.register_chatcommand("lightning", {
     description = "Sabotages light",
     func = function(name, param)
+        if settings.get_setting("hide_and_seek") then return false end
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
             core.set_timeofday(0)
             settings.active_sabotage = true
@@ -241,6 +243,7 @@ core.register_chatcommand("lightning", {
 core.register_chatcommand("reactor", {
     description = "Sabotages reactor",
     func = function(name, param)
+        if settings.get_setting("hide_and_seek") then return false end
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
             timer = settings.get_setting("sabotage_time")
             settings.current_sabotage = "reactor"
@@ -256,6 +259,7 @@ core.register_chatcommand("reactor", {
 core.register_chatcommand("oxygen", {
     description = "Sabotages oxygen",
     func = function(name, param)
+        if settings.get_setting("hide_and_seek") then return false end
         if settings.started and not settings.meeting_started and (settings.roles[name] == "impostor") and not settings.current_sabotage and not settings.active_sabotage then
             timer = settings.get_setting("sabotage_time")
             settings.current_sabotage = "oxygen"

@@ -9,58 +9,62 @@ function settings.show_customization_menu(player_name)
         "formspec_version[7]",
         "size[12,8]"
     }
+
+    local hide_and_seek = settings.get_setting("hide_and_seek")
     local i = 0
     for name, def in pairs(settings.lobby) do
-        i = i + 1
-        local y_pos, size = 1.35 + (i * 0.75), 0.625
-        local plus, minus = "^gui_overlay_plus.png", "^gui_overlay_minus.png"
+        if ((hide_and_seek and def.hide_and_seek) or name == "hide_and_seek") or (not hide_and_seek) then
+            i = i + 1
+            local y_pos, size = 0.85 + (i * 0.75), 0.625
+            local plus, minus = "^gui_overlay_plus.png", "^gui_overlay_minus.png"
 
-        t(formspec, "label[1.15,")
-        t(formspec, y_pos)
-        t(formspec, ";")
-        t(formspec, def.title)
-        t(formspec, "]")
-
-        if util.admin(player_name) then
-            t(formspec, "image_button[8,")
-            t(formspec, y_pos - (size / 1.75))
+            t(formspec, "label[1.15,")
+            t(formspec, y_pos)
             t(formspec, ";")
-            t(formspec, size)
-            t(formspec, ",")
-            t(formspec, size)
-            t(formspec, ";gui_buttonbg_small.png")
-            t(formspec, minus)
-            t(formspec, ";")
-            t(formspec, name)
-            t(formspec, "_minus;;true;false;gui_buttonbg_small_hover.png")
-            t(formspec, minus)
+            t(formspec, def.title)
             t(formspec, "]")
-        end
 
-        t(formspec, "label[9.2475,")
-        t(formspec, y_pos)
-        t(formspec, ";")
-        t(formspec, settings.get_setting(name))
-        t(formspec, "]")
+            if util.admin(player_name) then
+                t(formspec, "image_button[8,")
+                t(formspec, y_pos - (size / 1.75))
+                t(formspec, ";")
+                t(formspec, size)
+                t(formspec, ",")
+                t(formspec, size)
+                t(formspec, ";gui_buttonbg_small.png")
+                t(formspec, minus)
+                t(formspec, ";")
+                t(formspec, name)
+                t(formspec, "_minus;;true;false;gui_buttonbg_small_hover.png")
+                t(formspec, minus)
+                t(formspec, "]")
+            end
 
-        if util.admin(player_name) then
-            t(formspec, "image_button[10,")
-            t(formspec, y_pos - (size / 1.75))
+            t(formspec, "label[9.2475,")
+            t(formspec, y_pos)
             t(formspec, ";")
-            t(formspec, size)
-            t(formspec, ",")
-            t(formspec, size)
-            t(formspec, ";gui_buttonbg_small.png")
-            t(formspec, plus)
-            t(formspec, ";")
-            t(formspec, name)
-            t(formspec, "_plus;;true;false;gui_buttonbg_small_hover.png")
-            t(formspec, plus)
+            t(formspec, dump(settings.get_setting(name)))
             t(formspec, "]")
-        end
 
-        t(formspec, "image_button[3.5,8.5;5.75,3;settings_start.png;start;;true;false]")
+            if util.admin(player_name) then
+                t(formspec, "image_button[10,")
+                t(formspec, y_pos - (size / 1.75))
+                t(formspec, ";")
+                t(formspec, size)
+                t(formspec, ",")
+                t(formspec, size)
+                t(formspec, ";gui_buttonbg_small.png")
+                t(formspec, plus)
+                t(formspec, ";")
+                t(formspec, name)
+                t(formspec, "_plus;;true;false;gui_buttonbg_small_hover.png")
+                t(formspec, plus)
+                t(formspec, "]")
+            end
+        end
     end
+    
+    t(formspec, "image_button[3.5,8.5;5.75,3;settings_start.png;start;;true;false]")
 
     t(formspec, "image_button[1.35,0.45;2.75,0.75;gui_buttonbg.png;colors;Color;true;true;gui_buttonbg_hover.png]")
     t(formspec, "image_button[4.6,0.45;2.75,0.75;gui_buttonbg.png;costumes;Costumes;true;true;gui_buttonbg_hover.png]")
@@ -104,13 +108,24 @@ core.register_on_player_receive_fields(function(player, formname, fields)
     end
     for name, def in pairs(settings.lobby) do
         local value = settings.get_setting(name)
-        if fields[name.."_minus"] then
-            settings.set_setting(name, value - 1)
-            settings.play_sound("setting")
-        elseif fields[name.."_plus"] then
-            settings.set_setting(name, value + 1)
-            settings.play_sound("setting")
+        if def.type == "int" then
+            if fields[name.."_minus"] then
+                settings.set_setting(name, value - 1)
+            elseif fields[name.."_plus"] then
+                settings.set_setting(name, value + 1)
+            end
+        elseif def.type == "boolean" then
+            if fields[name.."_minus"] then
+                if value then
+                    settings.set_setting(name, false)
+                end
+            elseif fields[name.."_plus"] then
+                if not value then
+                    settings.set_setting(name, true)
+                end
+            end
         end
+        settings.play_sound("setting")
         for _, player in pairs(core.get_connected_players()) do
             update_settings_ui(player)
         end
