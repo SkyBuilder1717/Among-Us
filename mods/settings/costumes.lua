@@ -28,7 +28,7 @@ function settings.show_costumes_menu(player_name)
         insert(formspec, props.mesh)
         insert(formspec, ";")
         insert(formspec, table.concat(textures, ","))
-        insert(formspec, ";0,180;false;true;0,2.66;1]")
+        insert(formspec, ";0,180;false;true;0,0;1]")
     else
         insert(formspec, "model[0,2;5,5;preview;")
         insert(formspec, props.mesh)
