@@ -700,8 +700,10 @@ function settings.end_game()
     settings.ship()
     tasks.completed_tasks = {}
     settings.killed_people = {}
-    for _, handle in pairs(settings.music_handlers) do
-        core.sound_stop(handle)
+    if settings.music_handlers then
+        for _, handle in pairs(settings.music_handlers) do
+            core.sound_stop(handle)
+        end
     end
     settings.music_handlers = nil
 end
@@ -832,8 +834,10 @@ end)
 function settings.kill(name)
     local hide_and_seek = settings.get_setting("hide_and_seek")
     local player = core.get_player_by_name(name)
-    core.sound_play("kill_crewmate", {to_player = name})
     if player then
+        if (player:get_properties().visual_size.x < 1) then return end
+        core.sound_play("kill_crewmate", {to_player = name})
+        settings.roles[name] = "ghost"
         local obj = core.add_entity(player:get_pos(), "settings:dead_body")
         local props = player:get_properties()
         if obj then
@@ -844,7 +848,6 @@ function settings.kill(name)
                 mesh = props.mesh
             })
         end
-        settings.roles[name] = "ghost"
         player:set_properties({
             visual_size = {x = 0, y = 0, z = 0},
             is_visible = false,

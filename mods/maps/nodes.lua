@@ -694,7 +694,7 @@ core.register_node("maps:vent", {
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
     	local hide_and_seek = settings.get_setting("hide_and_seek")
-		if hide_and_seek and ((settings.vents[name] and (settings.vents[name] < 1)) or (settings.hide_timer < 30)) then return end
+		if hide_and_seek and (settings.vents[name] and (settings.vents[name] < 1)) then return end
 		if ((settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") or ((settings.roles[name] == "ghost") and not hide_and_seek)) then
 			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end

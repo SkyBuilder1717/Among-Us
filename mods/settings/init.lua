@@ -264,6 +264,14 @@ settings = {
             material_behind = true,
             material = {"costumes_cap.png"},
             price = 2000
+        },
+        toppat = {
+            modifier = "",
+            mesh = "character_toppat.glb",
+            icon = "costumes_toppat_icon.png",
+            material = {"costumes_toppat.png"},
+            material_behind = true,
+            price = 2500
         }
     },
     killed_people = {},
@@ -450,7 +458,7 @@ core.register_tool("settings:knife", {
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
                 killed = killed + 1
-                core.after((hide_and_seek and 5 or settings.get_setting("kill_cooldown")), function()
+                core.after((hide_and_seek and 1 or settings.get_setting("kill_cooldown")), function()
                     settings.cooldown[player_name] = nil
                     local plr = core.get_player_by_name(player_name)
                     if settings.started and not hide_and_seek and not settings.meeting_started and plr and not (plr:get_properties().visual_size.x < 1) and (settings.roles[player_name] == "impostor") then
