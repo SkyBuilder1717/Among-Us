@@ -1,6 +1,7 @@
 local BLACKLIST = {}
 
 local insert = table.insert
+local insert_all = table.insert_all
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
 local S = core.get_translator(modname)
