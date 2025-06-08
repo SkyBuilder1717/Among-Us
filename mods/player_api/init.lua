@@ -46,7 +46,7 @@ player_api.register_model("character.b3d", {
 
 local function choose_color(name)
 	local colors = settings.available_colors()
-	settings.set_color(name, colors[math.random(1, #colors)])
+	return settings.set_color(name, colors[math.random(1, #colors)])
 end
 
 local storage = settings.storage
@@ -78,11 +78,16 @@ core.register_on_joinplayer(function(player)
 	local ver = core.get_player_information(name).version_string
 	if not ((ver == "5.11.0") or (ver == "5.12.0")) then
 		core.kick_player(name, "Update to version 5.11 or newer!\nIf you are using MultiCraft, use Luanti instead! (formerly Minetest)")
+		return
 	end
+    local hex = settings.colors[settings.players[name]][1]
+	settings.send_embed(name.." joined the game.", hex)
 end)
 
 core.register_on_leaveplayer(function(player)
 	local name = player:get_player_name()
+    local hex = settings.colors[settings.players[name]][1]
+	settings.send_embed(name.." left the game.", hex)
 	settings.players[name] = nil
     settings.roles[name] = nil
     settings.hud[name] = nil

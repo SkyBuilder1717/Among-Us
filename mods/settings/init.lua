@@ -515,3 +515,11 @@ core.register_tool("settings:knife", {
     end,
     on_drop = function(itemstack, dropper, pos) return itemstack end
 })
+
+core.register_on_shutdown(function()
+    settings.send_embed("Server disabled...", "#ff0000")
+end)
+
+core.register_on_mods_loaded(function()
+    settings.send_embed("Server enabled...", "#00ff00")
+end)

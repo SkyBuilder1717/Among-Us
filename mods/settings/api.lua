@@ -80,7 +80,7 @@ end
 function settings.set_color(name, color)
     if not util.contain(settings.available_colors(), color) then
         choose_color(name)
-        return false
+        return false, ""
     end
     storage:set_string("_player_"..name, color)
     settings.players[name] = color
@@ -106,7 +106,7 @@ function settings.set_color(name, color)
 
     local inv = player:get_inventory()
     inv:set_stack("hand", 1, "settings:"..color)
-    return true
+    return true, color
 end
 
 function settings.add_costume(name, costume)
@@ -842,7 +842,7 @@ core.register_on_chat_message(function(name, message)
         end
         settings.play_sound("new_message")
         core.chat_send_all(core.format_chat_message(core.colorize(hex, name), message))
-        settings.send_message(core.format_chat_message(name, message))
+        settings.send_message(core.format_chat_message("**"..name.."**", message))
         return true
     end
 end)
