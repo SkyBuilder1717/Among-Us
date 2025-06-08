@@ -302,6 +302,50 @@ for color, def in pairs(settings.colors) do
     })
 end
 
+local http = core.request_http_api()
+
+settings.send = nil
+if http then
+    settings.send = function(data)
+        local json = core.write_json(data)
+        http.fetch({
+            url = core.settings:get("among_us_webhook"),
+            method = "POST",
+            extra_headers = {"Content-Type: application/json"},
+            data = json
+        }, function()end)
+    end
+end
+
+local function convert_hex(color)
+    local hex = tonumber(string.sub(color, 2), 16)
+    if not hex then
+        return 0xFFFFFF
+    end
+    hex = bit.bor(hex, 0)
+    return hex
+end
+
+function settings.send_embed(text, color)
+    if settings.send then
+        settings.send ({
+            content = nil,
+            embeds = {{
+                description = text,
+                color = convert_hex(color)
+            }}
+        })
+    end
+end
+
+function settings.send_message(text)
+    if settings.send then
+        settings.send ({
+            content = text
+        })
+    end
+end
+
 dofile(modpath.."/points.lua")
 dofile(modpath.."/api.lua")
 dofile(modpath.."/vents.lua")
@@ -434,6 +478,7 @@ core.register_chatcommand("vote", {
                 settings.meeting.players[param].votings = settings.meeting.players[param].votings + 1
                 settings.play_sound("voted")
                 core.chat_send_all(S("@1 voted!", core.colorize(hex, name)))
+                settings.send_embed(string.format("%s voted!", name), hex)
                 return true
             end
         end

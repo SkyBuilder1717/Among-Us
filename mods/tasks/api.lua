@@ -158,6 +158,7 @@ function tasks.show_taskbar()
 
     if (not settings.get_setting("hide_and_seek")) and (percentage == 1) then
         core.chat_send_all(S("Tasks completed!").." "..core.colorize("cyan", S("Crewmates win!")))
+        settings.send_embed("Tasks completed! Crewmates win!", "#00ffff")
         for name, role in pairs(settings.roles) do
             if (role == "crewmate") or (role == "ghost") or (role == "engineer") then
                 points.add(name, 750 + tasks.completed_tasks[name])

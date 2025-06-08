@@ -1,5 +1,6 @@
 local BLACKLIST = {}
 
+local insert = table.insert
 local modname = core.get_current_modname()
 local modpath = core.get_modpath(modname)
 local S = core.get_translator(modname)
@@ -56,7 +57,7 @@ core.register_entity("settings:dead_body", {
 function settings.available_colors()
 	local colors = {}
 	for color, _ in pairs(settings.colors) do
-		table.insert(colors, color)
+		insert(colors, color)
 	end
 	for _, color in pairs(settings.players) do
 		util.remove(colors, color)
@@ -96,7 +97,7 @@ function settings.set_color(name, color)
     for costume in string.gmatch(costume_string, "([^,]+)") do
         local def = settings.costumes[costume]
         if not def or not def.price or settings.has_costume(name, costume) then
-            table.insert(valid_costumes, costume)
+            insert(valid_costumes, costume)
         end
     end
 
@@ -142,7 +143,7 @@ function settings.apply_costumes(name)
     local costume_list = meta:get_string("_costumes")
     local costumes = {}
     for costume in string.gmatch(costume_list, "([^,]+)") do
-        table.insert(costumes, costume)
+        insert(costumes, costume)
     end
     local color = settings.players[name]
     local colors = settings.colors[color]
@@ -156,20 +157,20 @@ function settings.apply_costumes(name)
     for _, costume in ipairs(costumes) do
         local def = settings.costumes[costume]
         if def then
-            table.insert(costume_texture, def.modifier)
+            insert(costume_texture, def.modifier)
             if def.no_visor then visor = ")" end
             if def.material then
                 if def.material == "player_skin" then
                     if def.material_behind then
-                        table.insert(behind, table.concat({table.concat(texture), "^visor.png)"}))
+                        insert(behind, table.concat({table.concat(texture), "^visor.png)"}))
                     else
-                        table.insert(front, table.concat({table.concat(texture), "^visor.png)"}))
+                        insert(front, table.concat({table.concat(texture), "^visor.png)"}))
                     end
                 else
                     if def.material_behind then
-                        table.insert_all(behind, def.material)
+                        insert_all(behind, def.material)
                     else
-                        table.insert_all(front, def.material)
+                        insert_all(front, def.material)
                     end
                 end
             end
@@ -179,11 +180,11 @@ function settings.apply_costumes(name)
         end
     end
     if settings.started and settings.get_setting("hide_and_seek") and (settings.roles[name] == "impostor") then
-        table.insert(costume_texture, "^player_api_impostor.png")
+        insert(costume_texture, "^player_api_impostor.png")
     end
-    table.insert_all(materials, behind)
-    table.insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
-    table.insert_all(materials, front)
+    insert_all(materials, behind)
+    insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
+    insert_all(materials, front)
     player_api.set_model(player, mesh)
     player_api.set_textures(player, materials)
 end
@@ -199,11 +200,11 @@ function settings.toggle_costume(name, costume)
             local def = settings.costumes[costume]
             found = true
         else
-            table.insert(result, c)
+            insert(result, c)
         end
     end
     if not found then
-        table.insert(result, costume)
+        insert(result, costume)
     end
     meta:set_string("_costumes", table.concat(result, ","))
     settings.apply_costumes(name)
@@ -227,10 +228,10 @@ function settings.unlock_costume(name, costume)
     local found = false
     for c in string.gmatch(list, "([^,]+)") do
         if c == costume then found = true end
-        table.insert(result, c)
+        insert(result, c)
     end
     if not found then
-        table.insert(result, costume)
+        insert(result, costume)
     end
     meta:set_string("_costumes_owned", table.concat(result, ","))
 end
@@ -285,7 +286,7 @@ function settings.play_sound(sound, gain)
     local handles = {}
     for _, player in pairs(core.get_connected_players()) do
         local name = player:get_player_name()
-        table.insert(handles, core.sound_play(sound, {to_player = name, gain = (gain or 1)}))
+        insert(handles, core.sound_play(sound, {to_player = name, gain = (gain or 1)}))
     end
     return handles
 end
@@ -302,7 +303,7 @@ function settings.teleport_all(lobby)
         str = str:sub(2, -2)
         local pos = {}
         for v in string.gmatch(str, "([^,]+)") do
-            table.insert(pos, tonumber(v))
+            insert(pos, tonumber(v))
         end
         for _, player in pairs(core.get_connected_players()) do
             player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
@@ -390,6 +391,7 @@ local function get_impostors()
                 local color = settings.players[pname]
                 local hex = settings.colors[color][1]
                 core.chat_send_all(S("@1 is the impostor.", core.colorize(hex, pname)))
+                settings.send_embed(string.format("%s is the impostor.", name), hex)
                 player:set_physics_override({speed = 0})
                 core.after(10, function()
                     player:set_physics_override({speed = 1.1})
@@ -421,7 +423,7 @@ function settings.run_hide_timer()
                     local target = core.get_player_by_name(tname)
                     if trole ~= "impostor" and settings.roles[tname] ~= "ghost" and target then
                         settings.play_sound("ping")
-                        table.insert(huds,
+                        insert(huds,
                             impostor:hud_add({
                                 type = "waypoint",
                                 name = tname,
@@ -437,6 +439,7 @@ function settings.run_hide_timer()
 
     if settings.hide_timer <= 0 then
         core.chat_send_all(core.colorize("cyan", "Crewmates win!"))
+        settings.send_embed("Crewmates win!", "#00ffff")
         settings.play_sound("win_crewmate")
         for name, role in pairs(settings.roles) do
             if not (role == "impostor") then
@@ -474,7 +477,7 @@ function settings.start_game()
         local color = settings.players[pname]
         local hex = settings.colors[color][1]
         if prole == "impostor" then
-            table.insert(impostors_table, core.colorize(hex, pname))
+            insert(impostors_table, core.colorize(hex, pname))
         end
     end
 
@@ -514,7 +517,7 @@ core.register_chatcommand("teammates", {
                 local hex = settings.colors[color][1]
                 local player = core.get_player_by_name(pname)
                 if (prole == "impostor") and not (player:get_properties().visual_size.x < 1) then
-                    table.insert(impostors_table, core.colorize(hex, pname))
+                    insert(impostors_table, core.colorize(hex, pname))
                 end
             end
             core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
@@ -540,16 +543,19 @@ function settings.update_interface()
     end
 end
 
+local concat = table.concat
 function settings.finish_voting()
     core.chat_send_all("---")
     local most_voted = nil
     local max_votes = 0
     local tie = false
+    local discord = {}
 
     for player_name, def in pairs(settings.meeting.players) do
         local color = settings.players[player_name]
         local hex = settings.colors[color][1]
         core.chat_send_all(S("@1: @2 vote(-s)", core.colorize(hex, player_name), def.votings))
+        insert(discord, string.format("%s: %s vote(-s)", player_name, def.votings))
         if def.votings > max_votes then
             most_voted = player_name
             max_votes = def.votings
@@ -559,11 +565,13 @@ function settings.finish_voting()
         end
     end
     core.chat_send_all("---")
+    settings.send_embed(concat(discord, "\n"), "#a1a1a1")
 
     if not tie and most_voted then
         local color = settings.players[most_voted]
         local hex = settings.colors[color][1]
         core.chat_send_all(S("@1 was ejected.", core.colorize(hex, most_voted)))
+        settings.send_embed(string.format("%s was ejected.", most_voted), hex)
         local most_player = core.get_player_by_name(most_voted)
         settings.play_sound("eject")
         if most_player then
@@ -580,12 +588,15 @@ function settings.finish_voting()
     elseif tie then
         if max_votes == 0 then
             core.chat_send_all(S("No one was ejected. (Skipped)"))
+            settings.send_embed("No one was ejected. (Skipped)", "#a1a1a1")
         else
             core.chat_send_all(S("No one was ejected. (Tie)"))
+            settings.send_embed("No one was ejected. (Tie)", "#a1a1a1")
         end
         most_voted = nil
     else
         core.chat_send_all(S("No one was ejected."))
+        settings.send_embed("No one was ejected.", "#a1a1a1")
     end
     core.chat_send_all("---")
     for _, player in pairs(core.get_connected_players()) do
@@ -633,6 +644,7 @@ function settings.check_end_game()
 
     if impostors == 0 then
         core.chat_send_all(core.colorize("cyan", S("Crewmates win!")))
+        settings.send_embed("Crewmates win!", "#00ffff")
         for name, role in pairs(settings.roles) do
             if not (role == "impostor") then
                 points.add(name, 250 + tasks.completed_tasks[name])
@@ -644,6 +656,7 @@ function settings.check_end_game()
         settings.end_game()
     elseif (hide_and_seek and (crewmates == 0)) or ((not hide_and_seek) and (impostors >= crewmates)) then
         core.chat_send_all(core.colorize("red", S("Impostors win!")))
+        settings.send_embed("Impostors win!", "#ff0000")
         for name, role in pairs(settings.roles) do
             if not (role == "impostor") then
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
@@ -739,12 +752,14 @@ function settings.emergency_meeting(name, dead)
     local hex = settings.colors[color][1]
     if not dead then
         core.chat_send_all(S("@1 called emergency meeting!", core.colorize(hex, name)))
+        settings.send_embed(string.format("%s called emergency meeting!", name), hex)
         if (settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 25
         end
         settings.play_sound("emergency_meeting")
     else
         core.chat_send_all(S("@1 reported dead body!", core.colorize(hex, name)))
+        settings.send_embed(string.format("%s reported dead body!", name), hex)
         if (settings.roles[name] == "crewmate") or (settings.roles[name] == "crewmate") then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
         end
@@ -827,6 +842,7 @@ core.register_on_chat_message(function(name, message)
         end
         settings.play_sound("new_message")
         core.chat_send_all(core.format_chat_message(core.colorize(hex, name), message))
+        settings.send_message(core.format_chat_message(name, message))
         return true
     end
 end)
@@ -862,6 +878,7 @@ function settings.kill(name)
             local color = settings.players[name]
             local hex = settings.colors[color][1]
             core.chat_send_all(S("@1 killed!", core.colorize(hex, name)))
+            settings.send_embed(string.format("%s killed!", name), hex)
         end
     end
     settings.check_end_game()

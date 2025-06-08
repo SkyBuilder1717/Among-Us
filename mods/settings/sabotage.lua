@@ -138,8 +138,10 @@ function settings.sabotage()
             if timer < 0 then
                 if settings.current_sabotage == "reactor" then
                     core.chat_send_all(S("Reactor melted!").." "..core.colorize("red", S("Impostors win!")))
+                    settings.send_embed("Reactor melted! Impostors win!", "#ff0000")
                 elseif settings.current_sabotage == "oxygen" then
                     core.chat_send_all(S("No oxygen!").." "..core.colorize("red", S("Impostors win!")))
+                    settings.send_embed("No oxygen! Impostors win!", "#ff0000")
                 end
                 for name, role in pairs(settings.roles) do
                     if (role == "crewmate") or (role == "ghost") or (role == "engineer") then
@@ -236,6 +238,7 @@ core.register_chatcommand("lightning", {
             end
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(core.colorize("yellow", "Light malfunction!"))
+            settings.send_embed("Light malfunction!", "#ffff00")
         end
     end
 })
@@ -249,7 +252,8 @@ core.register_chatcommand("reactor", {
             settings.current_sabotage = "reactor"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", S("Reactor melting! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
+            core.chat_send_all(core.colorize("yellow", S("Reactor melting! @1 seconds until game over!", timer)))
+            settings.send_embed(string.format("Reactor melting! %s seconds until game over!", timer), "#ffff00")
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
@@ -265,7 +269,8 @@ core.register_chatcommand("oxygen", {
             settings.current_sabotage = "oxygen"
             settings.active_sabotage = true
             settings.reactor_hands = 0
-            core.chat_send_all(core.colorize("yellow", S("Oxygen leaking! @1 seconds until game over!", settings.get_setting("sabotage_time"))))
+            core.chat_send_all(core.colorize("yellow", S("Oxygen leaking! @1 seconds until game over!", timer)))
+            settings.send_embed(string.format("Oxygen leaking! %s seconds until game over!", timer), "#ffff00")
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
         end
@@ -279,6 +284,7 @@ core.register_chatcommand("communication", {
             settings.current_sabotage = "communication"
             settings.active_sabotage = true
             core.chat_send_all(core.colorize("yellow", "Communications disabled!"))
+            settings.send_embed("Communications disabled!", "#ffff00")
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
             tasks.update_hud()
         end

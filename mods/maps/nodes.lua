@@ -380,12 +380,14 @@ core.register_node("maps:numpad", {
 		if settings.active_sabotage and settings.current_sabotage == "oxygen" and not (player:get_properties().visual_size.x < 1) then
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
+            settings.send_embed(string.format("%s of %s!", settings.reactor_hands, 2), "#ffff00")
 		end
 		local name = player:get_player_name()
 		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Oxygen leaking fixed!"))
+			settings.send_embed("Oxygen leaking fixed!", "#00ff00")
 			core.after(30, function()
 				settings.current_sabotage = nil
 			end)
@@ -411,7 +413,8 @@ core.register_node("maps:electro_timing", {
 			settings.active_sabotage = false
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
-			for name, id in pairs(settings.black_screen) do
+			settings.send_embed("Light malfunction fixed!", "#00ff00")
+			for name, id in pairs(settings.black_screen) dos
 				local player = core.get_player_by_name(name)
 				if player then
 					player:hud_remove(id)
@@ -576,12 +579,14 @@ core.register_node("maps:reactor_hand", {
 		if settings.active_sabotage and settings.current_sabotage == "reactor" and not (player:get_properties().visual_size.x < 1) then
 			settings.reactor_hands = settings.reactor_hands + 1
 			core.chat_send_all(S("@1 of @2!", settings.reactor_hands, 2))
+            settings.send_embed(string.format("%s of %s!", settings.reactor_hands, 2), "#ffff00")
 		end
 		local name = player:get_player_name()
 		if (settings.reactor_hands > 1) and settings.active_sabotage then
 			settings.active_sabotage = false
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Reactor melting fixed!"))
+            settings.send_embed("Reactor melting fixed!", "#00ff00")
 			core.after(30, function()
 				settings.current_sabotage = nil
 			end)
@@ -659,6 +664,7 @@ core.register_node("maps:communication", {
 			settings.active_sabotage = false
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
 			core.chat_send_all(core.colorize("lime", "Communications fixed!"))
+            settings.send_embed("Communications fixed!", "#00ff00")
 			tasks.update_hud()
 			core.after(30, function()
 				settings.current_sabotage = nil
