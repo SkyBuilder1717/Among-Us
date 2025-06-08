@@ -414,7 +414,7 @@ core.register_node("maps:electro_timing", {
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 150
 			core.chat_send_all(core.colorize("lime", "Light malfunction fixed!"))
 			settings.send_embed("Light malfunction fixed!", "#00ff00")
-			for name, id in pairs(settings.black_screen) dos
+			for name, id in pairs(settings.black_screen) do
 				local player = core.get_player_by_name(name)
 				if player then
 					player:hud_remove(id)
