@@ -636,10 +636,12 @@ function settings.check_end_game()
     local crewmates = 0
     for name, role in pairs(settings.roles) do
         local player = core.get_player_by_name(name)
-        if role == "impostor" and not (player:get_properties().visual_size.x < 1) then
-            impostors = impostors + 1
-        elseif ((role == "crewmate") or (role == "engineer")) and not (player:get_properties().visual_size.x < 1) then
-            crewmates = crewmates + 1
+            if not (player:get_properties().visual_size.x < 1) then
+            if role == "impostor" then
+                impostors = impostors + 1
+            elseif (role == "crewmate") or (role == "engineer") then
+                crewmates = crewmates + 1
+            end
         end
     end
 
@@ -761,7 +763,7 @@ function settings.emergency_meeting(name, dead)
     else
         core.chat_send_all(S("@1 reported dead body!", core.colorize(hex, name)))
         settings.send_embed(string.format("%s reported dead body!", name), hex)
-        if (settings.roles[name] == "crewmate") or (settings.roles[name] == "crewmate") then
+        if (settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") then
             tasks.completed_tasks[name] = tasks.completed_tasks[name] + 100
         end
         settings.play_sound("dead_body_reported")
