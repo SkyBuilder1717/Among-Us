@@ -639,7 +639,7 @@ function settings.check_end_game()
         if not (player:get_properties().visual_size.x < 1) then
             if role == "impostor" then
                 impostors = impostors + 1
-            else
+            elseif (role == "crewmate") or (role == "engineer") then
                 crewmates = crewmates + 1
             end
         end
