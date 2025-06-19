@@ -52,7 +52,7 @@ tasks.on_rightclick = function(pos, node, player, stack, pointed_thing)
     end
     if settings.roles[name] == "impostor" then return end
     if hide_and_seek and (settings.roles[name] == "ghost") then return end
-    if settings.get_setting("hide_and_seek") and settings.hide_timer < 30 then return end
+    if settings and settings.get_setting("hide_and_seek") and (settings.hide_timer and (settings.hide_timer < 30)) then return end
     for _, task in pairs(tasks.players[name]) do
         if not (task.index >= #task.states) then
             local index = task.index + 1
