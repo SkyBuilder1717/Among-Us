@@ -144,7 +144,7 @@ function settings.sabotage()
                     settings.send_embed("No oxygen! Impostors win!", "#ff0000")
                 end
                 for name, role in pairs(settings.roles) do
-                    if (role == "crewmate") or (role == "ghost") or (role == "engineer") then
+                    if role ~= "impostor" then
                         points.add(name, math.floor(tasks.completed_tasks[name] / 2))
                     else
                         points.add(name, 1000 + (100 * settings.killed_people[name]) + tasks.completed_tasks[name])

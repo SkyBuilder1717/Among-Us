@@ -307,9 +307,7 @@ core.register_node("maps:data", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = tasks.on_rightclick
 })
@@ -321,9 +319,7 @@ core.register_node("maps:filter", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = tasks.on_rightclick
 })
@@ -344,9 +340,7 @@ core.register_node("maps:electro", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = tasks.on_rightclick
 })
@@ -358,9 +352,7 @@ core.register_node("maps:trash", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = tasks.on_rightclick
 })
@@ -372,9 +364,7 @@ core.register_node("maps:numpad", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		if settings.active_sabotage and settings.current_sabotage == "oxygen" and not (player:get_properties().visual_size.x < 1) then
@@ -402,9 +392,7 @@ core.register_node("maps:electro_timing", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
@@ -437,9 +425,7 @@ core.register_node("maps:transfer", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = tasks.on_rightclick
 })
@@ -532,9 +518,7 @@ core.register_node("maps:engine_lamp", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true
 })
 
@@ -545,9 +529,7 @@ core.register_node("maps:reactor_beacon", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true
 })
 
@@ -558,9 +540,7 @@ core.register_node("maps:reactor_tube", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 })
 
@@ -571,9 +551,7 @@ core.register_node("maps:reactor_hand", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		if settings.active_sabotage and settings.current_sabotage == "reactor" and not (player:get_properties().visual_size.x < 1) then
@@ -680,9 +658,7 @@ core.register_node("maps:oxygen_title", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true
 })
 
@@ -693,15 +669,13 @@ core.register_node("maps:vent", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 	on_rightclick = function(pos, node, player, stack, pointed_thing)
 		local name = player:get_player_name()
     	local hide_and_seek = settings.get_setting("hide_and_seek")
 		if hide_and_seek and (settings.vents[name] and (settings.vents[name] < 1)) then return end
-		if ((settings.roles[name] == "crewmate") or (settings.roles[name] == "engineer") or ((settings.roles[name] == "ghost") and not hide_and_seek)) then
+		if (((settings.roles[name] == "ghost") and not hide_and_seek) or (settings.roles[name] ~= "crewmate")) then
 			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end
     	local hide_and_seek = settings.get_setting("hide_and_seek")
@@ -718,9 +692,7 @@ core.register_node("maps:wires", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 })
 
@@ -731,9 +703,7 @@ core.register_node("maps:wires2", {
 	paramtype2 = "wallmounted",
 	sunlight_propagates = true,
 	walkable = false,
-	selection_box = {
-		type = "wallmounted",
-	},
+	selection_box = {type = "wallmounted"},
 	legacy_wallmounted = true,
 })
 
