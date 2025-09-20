@@ -127,16 +127,34 @@ function settings.show_vents_menu(name, pos)
     core.sound_play("vent", {to_player = name})
     core.show_formspec(name, FORMNAME, table.concat(formspec))
     if hide_and_seek or ((not hide_and_seek) and (settings.roles[name] and (settings.roles[name] == "engineer"))) then
-        core.after(5, function()
-            settings.player_positions[name] = nil
-            player:set_properties({
-                visual_size = {x = 1, y = 1, z = 1},
-                is_visible = true,
-                pointable = true,
-                makes_footstep_sound = true
-            })
-            core.close_formspec(name, FORMNAME)
-            core.sound_play("vent", {to_player = name})
+        core.after(1, function()
+            if settings.player_positions[name] then
+                core.after(1, function()
+                    if settings.player_positions[name] then
+                        core.after(1, function()
+                            if settings.player_positions[name] then
+                                core.after(1, function()
+                                    if settings.player_positions[name] then
+                                        core.after(1, function()
+                                            if settings.player_positions[name] then
+                                                settings.player_positions[name] = nil
+                                                player:set_properties({
+                                                    visual_size = {x = 1, y = 1, z = 1},
+                                                    is_visible = true,
+                                                    pointable = true,
+                                                    makes_footstep_sound = true
+                                                })
+                                                core.close_formspec(name, FORMNAME)
+                                                core.sound_play("vent", {to_player = name})
+                                            end
+                                        end)
+                                    end
+                                end)
+                            end
+                        end)
+                    end
+                end)
+            end
         end)
     end
 end

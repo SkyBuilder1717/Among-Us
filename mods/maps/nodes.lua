@@ -675,7 +675,7 @@ core.register_node("maps:vent", {
 		local name = player:get_player_name()
     	local hide_and_seek = settings.get_setting("hide_and_seek")
 		if hide_and_seek and (settings.vents[name] and (settings.vents[name] < 1)) then return end
-		if (((settings.roles[name] == "ghost") and not hide_and_seek) or (settings.roles[name] ~= "crewmate")) then
+		if (((settings.roles[name] == "ghost") and not hide_and_seek) or (settings.roles[name] ~= "impostor")) then
 			tasks.on_rightclick(pos, node, player, stack, pointed_thing)
 		end
     	local hide_and_seek = settings.get_setting("hide_and_seek")
