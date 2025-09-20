@@ -138,7 +138,7 @@ function settings.clear_costumes(name)
     settings.apply_costumes(name)
 end
 
-function settings.apply_costumes(name)
+function settings.apply_costumes(name, overlay)
     local player = core.get_player_by_name(name)
     local meta = player:get_meta()
     local costume_list = meta:get_string("_costumes")
@@ -180,8 +180,8 @@ function settings.apply_costumes(name)
             end
         end
     end
-    if settings.started and settings.get_setting("hide_and_seek") and (settings.roles[name] == "impostor") then
-        insert(costume_texture, "^player_api_impostor.png")
+    if overlay then
+        insert(costume_texture, overlay)
     end
     insert_all(materials, behind)
     insert(materials, table.concat({table.concat(texture), visor, table.concat(costume_texture)}))
@@ -307,8 +307,10 @@ function settings.teleport_all(lobby)
             insert(pos, tonumber(v))
         end
         for _, player in pairs(core.get_connected_players()) do
+            local name = player:get_player_name()
+            settings.apply_costumes(name)
             player:set_pos({x = pos[1], y = pos[2], z = pos[3]})
-            tasks.reset_hud(player:get_player_name())
+            tasks.reset_hud(name)
         end
     end
 end
@@ -349,6 +351,7 @@ local function get_impostors()
         end
     end
     if not hide_and_seek then
+        settings.send_message("The game started!")
         local engineers = settings.get_setting("engineers")
         for i = 0, engineers do
             if i > 0 then
@@ -373,6 +376,7 @@ local function get_impostors()
     end
 
     if hide_and_seek then
+        settings.send_message("Hide & Seek started!")
         core.set_timeofday(0)
         settings.hide_timer = 200
         tasks.generate_tasks()
@@ -392,7 +396,7 @@ local function get_impostors()
                 local color = settings.players[pname]
                 local hex = settings.colors[color][1]
                 core.chat_send_all(S("@1 is the impostor.", core.colorize(hex, pname)))
-                settings.send_embed(string.format("%s is the impostor.", name), hex)
+                settings.send_embed(string.format("%s is the impostor.", pname), hex)
                 player:set_physics_override({speed = 0})
                 core.after(10, function()
                     player:set_physics_override({speed = 1.1})
@@ -490,8 +494,8 @@ function settings.start_game()
         player:set_properties({
             nametag_color = {r=0,g=0,b=0,a=0}
         })
+        local role = settings.tell_role(name)
         if not settings.get_setting("hide_and_seek") then
-            local role = settings.tell_role(name)
             if role == "impostor" then
                 core.chat_send_player(name, S("Use Knife to kill others!@n/lightning, /reactor, /communication, /oxygen - sabotage!@nUse /close_door to close doors!@nUse /teammates to check your remain teammates!"))
                 core.chat_send_player(name, S("Impostors: @1.", table.concat(impostors_table, core.colorize("white", ", "))))
@@ -499,6 +503,10 @@ function settings.start_game()
                 core.chat_send_player(name, S("Move in the vents and complete tasks!"))
             else
                 core.chat_send_player(name, S("Complete tasks and eject the impostor to win!"))
+            end
+        else
+            if role == "impostor" then
+                settings.apply_costumes(name, "^player_api_impostor.png")
             end
         end
     end
@@ -664,7 +672,8 @@ function settings.check_end_game()
             if not (role == "impostor") then
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
             else
-                points.add(name, 500 + (100 * settings.killed_people[name]) + tasks.completed_tasks[name])
+                points.add(name, 500 + (100 * settings.killed_people[name]))
+                settings.apply_costumes(name, "^player_api_impostor.png")
             end
         end
         settings.play_sound("win_impostor")

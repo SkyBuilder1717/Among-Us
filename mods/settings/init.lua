@@ -502,7 +502,7 @@ core.register_tool("settings:knife", {
                 settings.cooldown[player_name] = true
                 settings.kill(vname)
                 core.sound_play("kill", {to_player = player_name})
-                killed = killed + 1
+                settings.killed_people[player_name] = killed + 1
                 core.after((hide_and_seek and 1 or settings.get_setting("kill_cooldown")), function()
                     settings.cooldown[player_name] = nil
                     local plr = core.get_player_by_name(player_name)
@@ -517,9 +517,9 @@ core.register_tool("settings:knife", {
 })
 
 core.register_on_shutdown(function()
-    settings.send_embed("Server disabled...", "#ff0000")
+    settings.send_embed("Server disabled.", "#4b4b4b")
 end)
 
 core.register_on_mods_loaded(function()
-    settings.send_embed("Server enabled...", "#00ff00")
+    settings.send_embed("Server enabled.", "#979797")
 end)

@@ -1,0 +1,2 @@
+# Discord webhook for relay channels
+among_us_webhook (Discord Webhook) string
