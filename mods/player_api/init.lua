@@ -76,7 +76,7 @@ core.register_on_joinplayer(function(player)
 	end
 	
 	local ver = core.get_player_information(name).version_string
-	if not (string.find(ver, "5.11") and string.find(ver, "5.12") and string.find(ver, "5.13") and string.find(ver, "5.14") and string.find(ver, "5.15")) then
+	if not (core.get_player_information(player_name).protocol_version >= core.protocol_versions["5.11.0"]) then
 		core.kick_player(name, "Update to version 5.11 or newer!\nIf you are using MultiCraft, use Luanti instead! (formerly Minetest)")
 		return
 	end
