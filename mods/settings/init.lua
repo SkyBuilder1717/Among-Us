@@ -9,6 +9,10 @@ settings = {
         players = {},
         hud = {}
     },
+    music = {
+        lobby = {},
+        ambiance = {}
+    },
     lobby = {
         impostors = {
             title = "Impostors",
@@ -443,9 +447,19 @@ core.register_on_joinplayer(function(player)
     for _, player in pairs(core.get_connected_players()) do
         update_settings_ui(player)
     end
+
+    settings.music.lobby[name] = core.sound_play("lobby", {to_player = name, loop = true, gain = 0.5})
+    settings.music.ambiance[name] = core.sound_play("ambiance", {to_player = name, loop = true})
 end)
 
-core.register_on_leaveplayer(function(_)
+core.register_on_leaveplayer(function(player)
+    local name = player:get_player_name()
+    if settings.music.lobby[name] then
+        settings.music.lobby[name] = nil
+    end
+    if settings.music.ambiance[name] then
+        settings.music.ambiance[name] = nil
+    end
     for _, player in pairs(core.get_connected_players()) do
         update_settings_ui(player)
     end

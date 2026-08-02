@@ -489,6 +489,10 @@ function settings.start_game()
     for _, player in pairs(core.get_connected_players()) do
         player:set_physics_override({speed = 1})
         local name = player:get_player_name()
+        if settings.music.lobby[name] then
+            core.sound_stop(settings.music.lobby[name])
+            settings.music.lobby[name] = nil
+        end
         player:hud_remove(settings.hud[name])
         core.close_formspec(name, '')
         player:set_properties({
@@ -673,7 +677,7 @@ function settings.check_end_game()
                 points.add(name, 100 + math.floor(tasks.completed_tasks[name] / 2))
             else
                 points.add(name, 500 + (100 * settings.killed_people[name]))
-                settings.apply_costumes(name, "^player_api_impostor.png")
+                settings.apply_costumes(name, "")
             end
         end
         settings.play_sound("win_impostor")
@@ -723,6 +727,7 @@ function settings.end_game()
     settings.teleport_all(true)
     settings.restore("skeld")
     settings.ship()
+    settings.music.lobby[name] = core.sound_play("lobby", {to_player = name, loop = true, gain = 0.5})
     tasks.completed_tasks = {}
     settings.killed_people = {}
     if settings.music_handlers then
